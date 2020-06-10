@@ -1,0 +1,9 @@
+.panel {
+  background-color: #fff;
+}
+
+.panel-scrollable {
+  background-color: #fff;
+  overflow: scroll;
+  height: 300px;
+}
