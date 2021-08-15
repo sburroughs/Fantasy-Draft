@@ -31,7 +31,6 @@ export class DraftManager extends React.Component<IProps, IState> {
 
         const populateTeams = (): Team[] => {
             return Array.from({length: props.teamCount}, () => ({
-                name: "default",
                 players: []
             }));
         };
@@ -149,14 +148,10 @@ export class DraftManager extends React.Component<IProps, IState> {
             <Container fluid>
                 <Row>
                     <Col>
-                        <div>
-                            <div id={"players-upload-parent"} className={"panel"}>
-                                <PlayerUpload value={availablePlayers}
-                                              onChangeValue={setAvailablePlayers}/>
-                            </div>
-
-
-                        </div>
+                        <button id={"players-upload-parent"} className={"btn btn-light"}>
+                            <PlayerUpload value={availablePlayers}
+                                          onChangeValue={setAvailablePlayers}/>
+                        </button>
                     </Col>
                     <Col>
                         <DraftStatus currentRound={draftStatus.currentRound}
@@ -165,19 +160,20 @@ export class DraftManager extends React.Component<IProps, IState> {
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg={{span: 4, order: 11}} md={6} sm={12}>
-                        <h2 className={"panel"}>Suggestions</h2>
-                        <SuggestedPlayers players={availablePlayers}/>
-                    </Col>
-                    <Col lg={{span: 4, order: 12}} md={6} sm={12}>
+                    <Col lg={6} md={12}>
+                        {/*<h2 className={"panel"}>Suggestions</h2>*/}
+                        {/*<SuggestedPlayers players={availablePlayers}/>*/}
+
+
                         <h2 className={"panel"}>Teams</h2>
                         <DraftedTeams teams={teams} selectedPick={draftStatus.currentTeam}/>
                     </Col>
-                    <Col lg={{span: 4, order: 1}} md={12} sm={12}>
+
+                    <Col lg={6} md={12}>
                         <h2 className={"panel"}>Players</h2>
-                        <DraftByText availablePlayers={availablePlayers}
-                                     draftedPlayers={draftPicks}
-                                     onSubmit={draftPlayers}/>
+                        {/*<DraftByText availablePlayers={availablePlayers}*/}
+                        {/*             draftedPlayers={draftPicks}*/}
+                        {/*             onSubmit={draftPlayers}/>*/}
 
                         <PlayerTable availablePlayers={availablePlayers}
                                      onDraftPlayer={draftPlayers}

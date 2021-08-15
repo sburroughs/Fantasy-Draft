@@ -26,11 +26,11 @@ export const PlayerUpload = (props: any) => {
 
     function getHeaderIndexes(indexRow: any): Map<HeaderType, number> {
         let indexMapping: Map<HeaderType, number> = new Map();
-        indexMapping.set(HeaderType.NAME, indexRow.indexOf("Overall"));
+        indexMapping.set(HeaderType.NAME, indexRow.indexOf("Player"));
         indexMapping.set(HeaderType.POSITION, indexRow.indexOf("Pos"));
         indexMapping.set(HeaderType.ADP, indexRow.indexOf("ADP"));
         indexMapping.set(HeaderType.TEAM, indexRow.indexOf("Team"));
-        indexMapping.set(HeaderType.TIER, indexRow.indexOf("Tier"));
+        indexMapping.set(HeaderType.POINTS, indexRow.indexOf("FF Pts"));
         return indexMapping;
     }
 
@@ -50,7 +50,7 @@ export const PlayerUpload = (props: any) => {
         POSITION = "POSITION",
         ADP = "ADP",
         TEAM = "TEAM",
-        TIER = "TIER"
+        POINTS = "POINTS"
     };
 
     // function updateValue(player: Player): Player {
@@ -91,10 +91,8 @@ export const PlayerUpload = (props: any) => {
         let teamIndex: number = headerIndex.get(HeaderType.TEAM) || defaultIndex()
         let team = row[teamIndex]
 
-        let tierIndex: number = headerIndex.get(HeaderType.TIER) || defaultIndex()
-        let tier = row[tierIndex]
-
-        let value = calculateTierBasedValue(tier, 16);
+        let pointsIndex: number = headerIndex.get(HeaderType.POINTS) || defaultIndex()
+        let points = row[pointsIndex]
 
         return {
             id: idx,
@@ -102,7 +100,7 @@ export const PlayerUpload = (props: any) => {
             position: position,
             adp: adp,
             team: team,
-            relativeValue: value
+            relativeValue: points
         };
 
     }
@@ -110,10 +108,10 @@ export const PlayerUpload = (props: any) => {
 
 
     return (
-        <div {...getRootProps()}>
+        <span {...getRootProps()}>
             <input {...getInputProps()} />
-            <p>Upload Players</p>
-        </div>
+            <span>Upload Players</span>
+        </span>
     );
 
 

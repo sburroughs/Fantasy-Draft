@@ -1,6 +1,7 @@
 import React from "react";
 import {Tab, Tabs} from 'react-bootstrap'
 import {Team} from "./Player";
+import ListGroup from "react-bootstrap/ListGroup";
 
 export class DraftedTeams extends React.Component<{ teams: Team[], selectedPick: number }, { key: any }> {
 
@@ -9,7 +10,7 @@ export class DraftedTeams extends React.Component<{ teams: Team[], selectedPick:
     constructor(props: any) {
         super(props);
         this.state = {
-            key: "team1",
+            key: "1",
         };
     }
 
@@ -18,15 +19,14 @@ export class DraftedTeams extends React.Component<{ teams: Team[], selectedPick:
         return (
             <Tabs id="suggested-player-tabs">
                 {teams.map((team, idx) =>
-                    (<Tab eventKey={idx} key={idx} title={"Team " + (idx + 1)}>
-                        <div className={"panel-scrollable"}>
-                            <h4>{team.name}</h4>
-                            <ol>
-                                {team.players.map((p, pIdx) => {
-                                    return <li key={'team' + idx + pIdx}>{p.name + " " + p.position} </li>
-                                })}
-                            </ol>
-                        </div>
+                    (<Tab eventKey={idx} key={idx} title={(idx + 1)}>
+
+                        <ListGroup>
+                            {team.players.map((p, pIdx) => {
+                                return <ListGroup.Item key={'team' + idx + pIdx}>{p.position + " " + p.name}</ListGroup.Item>
+                            })}
+                        </ListGroup>
+
                     </Tab>))}
             </Tabs>
         );

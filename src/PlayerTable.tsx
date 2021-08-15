@@ -45,14 +45,14 @@ const columns: readonly Column<Player>[] = [
     {
         key: 'relativeValue',
         name: 'RV',
-        width: 60,
+        width: 90,
         frozen: true,
         sortable: true
     },
     {
         key: 'position',
         name: 'Position',
-        width: 60,
+        width: 30,
         frozen: true,
         sortable: false,
         filterRenderer: p => (
