@@ -8,7 +8,7 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <DraftManager  teamCount={12}/>
+                <DraftManager defaultTeamCount={6}/>
             </header>
         </div>
     );

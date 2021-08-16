@@ -18,16 +18,16 @@ export class DraftedTeams extends React.Component<{ teams: Team[], selectedPick:
         let {teams} = this.props;
         return (
             <Tabs id="suggested-player-tabs">
-                {teams.map((team, idx) =>
-                    (<Tab eventKey={idx} key={idx} title={(idx + 1)}>
-
+                {teams.map((team, idx) => (
+                    <Tab eventKey={idx} key={idx} title={(idx + 1)}>
                         <ListGroup>
-                            {team.players.map((p, pIdx) => {
-                                return <ListGroup.Item key={'team' + idx + pIdx}>{p.position + " " + p.name}</ListGroup.Item>
-                            })}
+                            {team.players.length === 0 && <ListGroup.Item>Empty</ListGroup.Item>}
+                            {team.players.map((p, pIdx) =>
+                                <ListGroup.Item>{(pIdx + 1) + " " + p.position + " " + p.name}</ListGroup.Item>
+                            )}
                         </ListGroup>
-
-                    </Tab>))}
+                    </Tab>
+                ))}
             </Tabs>
         );
     }

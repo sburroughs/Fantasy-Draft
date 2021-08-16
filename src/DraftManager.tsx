@@ -3,16 +3,15 @@ import PlayerTable from "./PlayerTable";
 import {Player, Team, IDraftStatus} from "./Player";
 import {Col, Container, Row} from "react-bootstrap";
 import {PlayerUpload} from "./PlayerUpload";
-import SuggestedPlayers from "./SuggestedPlayer";
 import DraftedTeams from "./DraftedTeams";
-import DraftByText from "./DraftByText"
 import DraftStatus from "./DraftStatus";
 import Utility from "./Utility";
+import ConfigurationModal from "./ConfigurationModal";
+import Button from "react-bootstrap/Button";
 
 
 interface IProps {
-    teamCount: number
-
+    defaultTeamCount: number
 }
 
 interface IState {
@@ -29,8 +28,14 @@ export class DraftManager extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
 
+        const getTeamCount = (): number => {
+            return localStorage.getItem("config")
+                ? localStorage.getItem("config.teamCount")
+                : props.defaultTeamCount;
+        };
+
         const populateTeams = (): Team[] => {
-            return Array.from({length: props.teamCount}, () => ({
+            return Array.from({length: getTeamCount()}, () => ({
                 players: []
             }));
         };
@@ -41,8 +46,9 @@ export class DraftManager extends React.Component<IProps, IState> {
                 currentRound: 1,
                 currentPick: 1
             }
-        }
+        };
 
+        //TODO: calling getTeamCount twice is lazy
         this.state = {
             availablePlayers: [],
             draftPicks: [],
@@ -85,18 +91,18 @@ export class DraftManager extends React.Component<IProps, IState> {
             }
         }
 
-        const nextTurnSequential = (draftStatus: IDraftStatus) => {
-            // increment current pick
-            let updatedPick = draftStatus.currentPick + 1
-            // depending on draft style, switch to next team
-            let updatedTeam = draftStatus.currentTeam === teams.length ? 1 : draftStatus.currentTeam + 1;
-            let updatedRound = draftStatus.currentTeam === teams.length ? draftStatus.currentRound + 1 : draftStatus.currentRound;
-            return {
-                currentTeam: updatedTeam,
-                currentRound: updatedRound,
-                currentPick: updatedPick
-            }
-        }
+        // const nextTurnSequential = (draftStatus: IDraftStatus) => {
+        //     // increment current pick
+        //     let updatedPick = draftStatus.currentPick + 1
+        //     // depending on draft style, switch to next team
+        //     let updatedTeam = draftStatus.currentTeam === teams.length ? 1 : draftStatus.currentTeam + 1;
+        //     let updatedRound = draftStatus.currentTeam === teams.length ? draftStatus.currentRound + 1 : draftStatus.currentRound;
+        //     return {
+        //         currentTeam: updatedTeam,
+        //         currentRound: updatedRound,
+        //         currentPick: updatedPick
+        //     }
+        // }
 
 
         const setAvailablePlayers = (players: any) => {
@@ -148,10 +154,13 @@ export class DraftManager extends React.Component<IProps, IState> {
             <Container fluid>
                 <Row>
                     <Col>
-                        <button id={"players-upload-parent"} className={"btn btn-light"}>
+                        <Button id={"players-upload-parent"}>
                             <PlayerUpload value={availablePlayers}
                                           onChangeValue={setAvailablePlayers}/>
-                        </button>
+                        </Button>
+
+                        <ConfigurationModal/>
+
                     </Col>
                     <Col>
                         <DraftStatus currentRound={draftStatus.currentRound}
@@ -163,8 +172,6 @@ export class DraftManager extends React.Component<IProps, IState> {
                     <Col lg={6} md={12}>
                         {/*<h2 className={"panel"}>Suggestions</h2>*/}
                         {/*<SuggestedPlayers players={availablePlayers}/>*/}
-
-
                         <h2 className={"panel"}>Teams</h2>
                         <DraftedTeams teams={teams} selectedPick={draftStatus.currentTeam}/>
                     </Col>
