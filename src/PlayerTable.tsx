@@ -17,7 +17,6 @@ import './Player.css'
 import {NflTeam, NflTeams, Player, Team} from './Player';
 import {createPortal} from "react-dom";
 
-
 const columns: readonly Column<Player>[] = [
     // SelectColumn,
     {
@@ -26,6 +25,14 @@ const columns: readonly Column<Player>[] = [
         width: 30,
         frozen: true,
         sortable: true,
+    },
+    {
+        key: 'tier',
+        name: 'Tier',
+        width: 30,
+        frozen: true,
+        sortable: true,
+        formatter: ({ row }) => <div >{row.tier}</div>
     },
     {
         key: 'name',
@@ -84,9 +91,9 @@ const columns: readonly Column<Player>[] = [
             <div className="rdg-filter-container">
                 <select className="rdg-filter" value={p.value} onChange={e => p.onChange(e.target.value)}>
                     <option value="All">All</option>
-                    {NflTeams.map((team: NflTeam) => {
-                        return <option value={team.code}>{team.code}</option>
-                    })}
+                    {NflTeams.map((team: NflTeam) =>
+                        <option value={team.code}>{team.code}</option>
+                    )}
                 </select>
             </div>
         )
@@ -94,11 +101,41 @@ const columns: readonly Column<Player>[] = [
 
 ];
 
-const RowRenderer = ( props: RowRendererProps<Player>) => {
+const RowRenderer = (props: RowRendererProps<Player>) => {
+
+
+
+    const getRowStyle = () => {
+        return {
+            color: getRowBackground()
+        };
+    };
+
+    const getRowBackground = () => {
+
+        let v = props.row.relativeValue;
+        let color;
+        if(v > 100)
+            color = 'Green'
+        else if(v > 75)
+            color = 'Black'
+        else if(v > 50)
+            color = 'GoldenRod'
+        else if(v > 0)
+            color = 'DarkOrange'
+        else
+            color = 'Red'
+
+        return color;
+    };
+
     return (
-        <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
-            <DataGridRow {...props} />
-        </ContextMenuTrigger>
+        <div style={getRowStyle()}>
+            <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
+                <DataGridRow {...props} />
+            </ContextMenuTrigger>
+        </div>
+
     );
 }
 
@@ -118,7 +155,6 @@ function PlayerTable(props: IProp) {
         team: 'All',
         name: ''
     });
-    const [editable, setEditable] = useState(() => false);
 
 
     const playerSubset: readonly Player[] = useMemo(() => {
@@ -183,6 +219,15 @@ function PlayerTable(props: IProp) {
 
     }
 
+    function onPlayerTarget(e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) {
+        let player: Player = playerSubset[rowIdx];
+
+        console.log("targeting: " + player.name)
+
+
+    }
+
+
     function blankCallback(e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) {
     }
 
@@ -196,7 +241,7 @@ function PlayerTable(props: IProp) {
                         columns={columns}
                         rows={playerSubset}
                         width={width}
-                        height={height - 150}
+                        height={height}
                         selectedRows={selectedRows}
                         onSelectedRowsChange={setSelectedRows}
                         onRowsUpdate={handleRowsUpdate}
@@ -214,8 +259,8 @@ function PlayerTable(props: IProp) {
                 <ContextMenu id="grid-context-menu">
                     <MenuItem onClick={onPlayerDraft}>Draft Player</MenuItem>
                     <SubMenu title="Target Player">
-                        <MenuItem onClick={setEditable}>Aggressive</MenuItem>
-                        <MenuItem onClick={blankCallback}>Stretch</MenuItem>
+                        <MenuItem onClick={onPlayerTarget}>Aggressive</MenuItem>
+                        <MenuItem onClick={onPlayerTarget}>Stretch</MenuItem>
                     </SubMenu>
                 </ContextMenu>,
                 document.body

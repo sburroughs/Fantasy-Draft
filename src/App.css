@@ -18,7 +18,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(10px + 1vmin);
 }
 
 .App-link {
@@ -40,6 +40,13 @@
   margin: 1em 0;
   align-items: center;
   justify-content: space-between;
+
 }
 
+/*.parent {*/
+/*  display: flex;*/
+/*  align-items: flex-start;*/
+/*  flex-wrap: nowrap;*/
+/*  height: 250px;*/
+/*}*/
 

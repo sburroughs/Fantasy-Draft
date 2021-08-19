@@ -39,25 +39,25 @@ export const PlayerUpload = (props: any) => {
         let index = 0;
         let tier = 0;
 
-        let rvValue = players[rvIndex].points;
+        let rvValue: number = players[rvIndex].points;
 
-        for (let i = tiers.length-1; i >= 0 ; i--) {
+        for (let i = tiers.length - 1; i >= 0; i--) {
             tier++;
-            for (let j = tiers[i].length-1; j >= 0 ; j--) {
+            for (let j = tiers[i].length - 1; j >= 0; j--) {
                 let p: Player = players[index];
-                if(tiers[i][j] !== players[index].points){
+                if (tiers[i][j] !== players[index].points) {
                     console.log("Mismatch encountered: " + tiers[i][j] + " " + players[index].points);
                 }
                 p.tier = tier;
-                p.relativeValue = p.points - rvValue;
+                p.relativeValue = parseFloat((p.points - rvValue).toFixed(2))
                 index++;
             }
         }
         tier++;
-        for(index; index < players.length; index++){
+        for (index; index < players.length; index++) {
             let p = players[index];
             p.tier = tier;
-            p.relativeValue = p.points - rvValue;
+            p.relativeValue = parseFloat((p.points - rvValue).toFixed(2))
         }
     }
 
@@ -157,7 +157,8 @@ export const PlayerUpload = (props: any) => {
         let team = row[teamIndex]
 
         let pointsIndex: number = headerIndex.get(HeaderType.POINTS) || defaultIndex()
-        let points = row[pointsIndex]
+        let points: number = parseFloat(row[pointsIndex])
+        let roundedPoints: number = parseFloat(points.toFixed(2))
 
         return {
             id: idx,
@@ -165,7 +166,7 @@ export const PlayerUpload = (props: any) => {
             position: position,
             adp: adp,
             team: team,
-            points: points,
+            points: roundedPoints,
             relativeValue: 0,
             tier: 1
         };
