@@ -19,13 +19,13 @@ import {createPortal} from "react-dom";
 
 
 const columns: readonly Column<Player>[] = [
-    SelectColumn,
+    // SelectColumn,
     {
         key: 'adp',
         name: 'ADP',
         width: 30,
         frozen: true,
-        sortable: true
+        sortable: true,
     },
     {
         key: 'name',
@@ -40,12 +40,19 @@ const columns: readonly Column<Player>[] = [
                     onChange={e => p.onChange(e.target.value)}
                 />
             </div>
-        )
+        ),
+    },
+    {
+        key: 'points',
+        name: 'Points',
+        width: 30,
+        frozen: true,
+        sortable: true
     },
     {
         key: 'relativeValue',
         name: 'RV',
-        width: 90,
+        width: 30,
         frozen: true,
         sortable: true
     },
@@ -87,7 +94,7 @@ const columns: readonly Column<Player>[] = [
 
 ];
 
-function RowRenderer(props: RowRendererProps<Player>) {
+const RowRenderer = ( props: RowRendererProps<Player>) => {
     return (
         <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
             <DataGridRow {...props} />
@@ -111,6 +118,8 @@ function PlayerTable(props: IProp) {
         team: 'All',
         name: ''
     });
+    const [editable, setEditable] = useState(() => false);
+
 
     const playerSubset: readonly Player[] = useMemo(() => {
 
@@ -144,7 +153,7 @@ function PlayerTable(props: IProp) {
     function clearFilters() {
         setFilters({
             position: 'All',
-            team:'All',
+            team: 'All',
             name: ''
         });
     }
@@ -179,7 +188,7 @@ function PlayerTable(props: IProp) {
 
 
     return (
-        <div style={{flex: '1 1 auto', height: '95vh'}}>
+        <div style={{flex: '1 1 auto', minHeight: '90vh'}}>
             <AutoSizer>
                 {({height, width}) => (
                     <DataGrid
@@ -205,7 +214,7 @@ function PlayerTable(props: IProp) {
                 <ContextMenu id="grid-context-menu">
                     <MenuItem onClick={onPlayerDraft}>Draft Player</MenuItem>
                     <SubMenu title="Target Player">
-                        <MenuItem onClick={blankCallback}>Aggressive</MenuItem>
+                        <MenuItem onClick={setEditable}>Aggressive</MenuItem>
                         <MenuItem onClick={blankCallback}>Stretch</MenuItem>
                     </SubMenu>
                 </ContextMenu>,

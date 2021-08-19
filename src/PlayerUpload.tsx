@@ -2,6 +2,7 @@ import React, {useCallback} from "react";
 import {useDropzone} from "react-dropzone";
 import Papa, {ParseResult} from 'papaparse';
 import {Player} from "./Player";
+import {ckmeans, equalIntervalBreaks} from 'simple-statistics'
 
 
 export const PlayerUpload = (props: any) => {
@@ -34,6 +35,68 @@ export const PlayerUpload = (props: any) => {
         return indexMapping;
     }
 
+    function updateTier(players: Player[], tiers: number[][], rvIndex: number) {
+        let index = 0;
+        let tier = 0;
+
+        let rvValue = players[rvIndex].points;
+
+        for (let i = tiers.length-1; i >= 0 ; i--) {
+            tier++;
+            for (let j = tiers[i].length-1; j >= 0 ; j--) {
+                let p: Player = players[index];
+                if(tiers[i][j] !== players[index].points){
+                    console.log("Mismatch encountered: " + tiers[i][j] + " " + players[index].points);
+                }
+                p.tier = tier;
+                p.relativeValue = p.points - rvValue;
+                index++;
+            }
+        }
+        tier++;
+        for(index; index < players.length; index++){
+            let p = players[index];
+            p.tier = tier;
+            p.relativeValue = p.points - rvValue;
+        }
+    }
+
+    function updatePlayersRVandTier(basePlayers: Player[]) {
+
+        let pointsByPosition: any = new Map<string, Player[]>();
+        basePlayers.forEach(p => {
+            let x = pointsByPosition.has(p.position) ? pointsByPosition.get(p.position) : []
+            x.push(p);
+            pointsByPosition.set(p.position, x);
+        });
+
+        let qb: Player[] = pointsByPosition.get("QB");
+        let rb: Player[] = pointsByPosition.get("RB");
+        let wr: Player[] = pointsByPosition.get("WR");
+        let te: Player[] = pointsByPosition.get("TE");
+        let k: Player[] = pointsByPosition.get("K");
+
+        let qbPoint: number[] = qb.slice(0, 32).map((p: Player) => p.points);
+        let rbPoint: number[] = rb.slice(0, 64).map((p: Player) => p.points);
+        let wrPoint: number[] = wr.slice(0, 64).map((p: Player) => p.points);
+        let tePoint: number[] = te.slice(0, 32).map((p: Player) => p.points);
+        let kPoint: number[] = k.slice(0, 32).map((p: Player) => p.points);
+
+        let qbTiers: number[][] = ckmeans(qbPoint, 12);
+        let rbTiers: number[][] = ckmeans(rbPoint, 24);
+        let wrTiers: number[][] = ckmeans(wrPoint, 24);
+        let teTiers: number[][] = ckmeans(tePoint, 12);
+        let kTiers: number[][] = ckmeans(kPoint, 12);
+
+        // update players tiers
+        updateTier(qb, qbTiers, 12);
+        updateTier(rb, rbTiers, 24);
+        updateTier(wr, wrTiers, 24);
+        updateTier(te, teTiers, 12);
+        updateTier(k, kTiers, 12);
+
+    }
+
     function parse(data: ParseResult): Player[] {
 
         let indexMapping = getHeaderIndexes(data.data[0]);
@@ -41,6 +104,9 @@ export const PlayerUpload = (props: any) => {
             .splice(1) // we already have header indexes. remove index row.
             .filter(d => d.length > 1) // ensure valid row. helps remove "" empty rows.
             .map((d, idx) => getPlayer(d, indexMapping, idx));
+
+        updatePlayersRVandTier(basePlayers);
+
         return basePlayers;
 
     }
@@ -67,7 +133,6 @@ export const PlayerUpload = (props: any) => {
         let adjustedValue = value - 100;
         return adjustedValue;
     }
-
 
 
     function getPlayer(row: any, headerIndex: Map<HeaderType, number>, idx: any): Player {
@@ -100,11 +165,12 @@ export const PlayerUpload = (props: any) => {
             position: position,
             adp: adp,
             team: team,
-            relativeValue: points
+            points: points,
+            relativeValue: 0,
+            tier: 1
         };
 
     }
-
 
 
     return (

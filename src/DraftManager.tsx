@@ -8,6 +8,7 @@ import DraftStatus from "./DraftStatus";
 import Utility from "./Utility";
 import ConfigurationModal from "./ConfigurationModal";
 import Button from "react-bootstrap/Button";
+import SuggestedPlayers from "./SuggestedPlayer";
 
 
 interface IProps {
@@ -153,7 +154,7 @@ export class DraftManager extends React.Component<IProps, IState> {
         return (
             <Container fluid>
                 <Row>
-                    <Col>
+                    <Col lg={4} md={12}>
                         <Button id={"players-upload-parent"}>
                             <PlayerUpload value={availablePlayers}
                                           onChangeValue={setAvailablePlayers}/>
@@ -162,21 +163,21 @@ export class DraftManager extends React.Component<IProps, IState> {
                         <ConfigurationModal/>
 
                     </Col>
-                    <Col>
+                    <Col lg={8} md={12}>
                         <DraftStatus currentRound={draftStatus.currentRound}
                                      currentTeam={draftStatus.currentTeam}
                                      currentPick={draftStatus.currentPick}/>
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg={6} md={12}>
-                        {/*<h2 className={"panel"}>Suggestions</h2>*/}
-                        {/*<SuggestedPlayers players={availablePlayers}/>*/}
+                    <Col lg={4} md={12}>
+                        <h2 className={"panel"}>Suggestions</h2>
+                        <SuggestedPlayers players={availablePlayers}/>
                         <h2 className={"panel"}>Teams</h2>
                         <DraftedTeams teams={teams} selectedPick={draftStatus.currentTeam}/>
                     </Col>
 
-                    <Col lg={6} md={12}>
+                    <Col lg={8} md={12}>
                         <h2 className={"panel"}>Players</h2>
                         {/*<DraftByText availablePlayers={availablePlayers}*/}
                         {/*             draftedPlayers={draftPicks}*/}

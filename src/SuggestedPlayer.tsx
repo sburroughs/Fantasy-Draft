@@ -7,8 +7,13 @@ const SuggestedPlayers = (props: any) => {
     const [key, setKey] = useState("best")
     const players = [...props.players];
 
+    function sortByPoints(p1:Player, p2:Player) {
+        return p2.relativeValue - p1.relativeValue;
+    }
+
     function getBestAvailable(limit: number): Player[] {
         return [...players]
+            .sort(sortByPoints)
             .splice(0, 5);
     }
 
@@ -44,9 +49,6 @@ const SuggestedPlayers = (props: any) => {
               onSelect={setKey}>
             <Tab eventKey="best" title="BEST">
                 <TopPlayerList players={getBestAvailable(5)} keyId={"best"}></TopPlayerList>
-            </Tab>
-            <Tab eventKey="team" title="TEAM">
-                <TopPlayerList players={getTeamNeed(5)} keyId={"team"}></TopPlayerList>
             </Tab>
             <Tab eventKey="qb" title="QB">
                 <TopPlayerList players={getBestQB(5)} keyId={"qb"}></TopPlayerList>
