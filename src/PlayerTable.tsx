@@ -32,7 +32,9 @@ const columns: readonly Column<Player>[] = [
         width: 30,
         frozen: true,
         sortable: true,
-        formatter: ({ row }) => <div >{row.tier}</div>
+        cellClass: () => {
+            return "tier-filled"
+        }
     },
     {
         key: 'name',
@@ -61,7 +63,10 @@ const columns: readonly Column<Player>[] = [
         name: 'RV',
         width: 30,
         frozen: true,
-        sortable: true
+        sortable: true,
+        cellClass: () => {
+            return "rv-filled"
+        }
     },
     {
         key: 'position',
@@ -79,7 +84,10 @@ const columns: readonly Column<Player>[] = [
                     <option value="TE">TE</option>
                 </select>
             </div>
-        )
+        ),
+        cellClass: () => {
+            return "position-filled"
+        }
     },
     {
         key: 'team',
@@ -103,39 +111,40 @@ const columns: readonly Column<Player>[] = [
 
 const RowRenderer = (props: RowRendererProps<Player>) => {
 
-
-
-    const getRowStyle = () => {
-        return {
-            color: getRowBackground()
-        };
-    };
-
-    const getRowBackground = () => {
+    const getRowBackgroundClass = () => {
 
         let v = props.row.relativeValue;
         let color;
-        if(v > 100)
-            color = 'Green'
-        else if(v > 75)
-            color = 'Black'
-        else if(v > 50)
-            color = 'GoldenRod'
-        else if(v > 0)
-            color = 'DarkOrange'
+        if (v > 100)
+            color = '1'
+        else if (v > 80)
+            color = '2'
+        else if (v > 60)
+            color = '3'
+        else if (v > 40)
+            color = '4'
+        else if (v > 0)
+            color = '5'
         else
-            color = 'Red'
+            color = '6'
 
-        return color;
+        return "rv-" + color;
     };
 
-    return (
-        <div style={getRowStyle()}>
-            <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
-                <DataGridRow {...props} />
-            </ContextMenuTrigger>
-        </div>
+    function getRowTierColor() {
+        return "tier-" + props.row.tier;
+    }
 
+    function getPositionColor() {
+        return "position-" + props.row.position.toLowerCase();
+    }
+
+    return (
+        <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
+            <div className={getRowBackgroundClass() + " " + getRowTierColor() + " " + getPositionColor()}>
+                <DataGridRow {...props} />
+            </div>
+        </ContextMenuTrigger>
     );
 }
 
@@ -176,6 +185,7 @@ function PlayerTable(props: IProp) {
                 break;
             case 'id':
             case 'adp':
+            case 'tier':
             case 'relativeValue':
                 sortedPlayers = sortedPlayers.sort((a, b) => a[sortColumn] - b[sortColumn]);
                 break;

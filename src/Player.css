@@ -1,9 +1,80 @@
 .panel {
-  background-color: #fff;
+    margin-top: 10px;
+    background-color: #fff;
 }
 
 .panel-scrollable {
-  background-color: #fff;
-  overflow: scroll;
-  height: 300px;
+    background-color: #fff;
+    overflow: scroll;
+    height: 300px;
+}
+
+/*relative value*/
+.rv-1 .rv-filled {
+    background-color: rgba(0, 128, 0, 0.6);
+}
+
+.rv-2 .rv-filled {
+    background-color: rgba(0, 128, 0, 0.4);
+}
+
+.rv-3 .rv-filled {
+    background-color: rgba(0, 128, 0, 0.2);
+}
+
+.rv-4 .rv-filled {
+    background-color: rgba(255, 0, 0, 0.4);
+    color: white;
+}
+
+.rv-5 .rv-filled {
+    background-color: rgba(255, 0, 0, 0.6);
+    color: white;
+}
+
+.rv-6 .rv-filled {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+}
+
+/*tiers*/
+.tier-1 .tier-filled {
+    background-color: rgba(0, 128, 0, 0.6);
+}
+
+.tier-2 .tier-filled {
+    background-color: rgba(0, 128, 0, 0.4);
+}
+
+.tier-3 .tier-filled {
+    background-color: rgba(0, 128, 0, 0.3);
+}
+
+.tier-4 .tier-filled {
+    background-color: rgba(0, 128, 0, 0.2);
+}
+
+.tier-5 .tier-filled {
+    background-color: rgba(0, 128, 0, 0.1);
+}
+
+/*position*/
+.position-qb .position-filled {
+    background-color: mediumpurple;
+}
+
+.position-rb .position-filled {
+    background-color: lightblue;
+}
+
+.position-wr .position-filled {
+    background-color: mediumaquamarine;
+}
+
+.position-te .position-filled {
+    background-color: orange;
+}
+
+.position-k .position-filled {
+    background-color: hotpink;
 }
