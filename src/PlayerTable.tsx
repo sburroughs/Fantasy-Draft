@@ -150,7 +150,7 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
 
 
 interface IProp {
-    availablePlayers: any
+    availablePlayers: Player[]
     onDraftPlayer: any
     onUpdatedAvailablePlayers: any
 }

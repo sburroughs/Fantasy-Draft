@@ -24,8 +24,7 @@ function ConfigurationModal() {
 
         try {
             let valid = JSON.parse(form[0].value);
-            let updated = JSON.stringify(valid);
-            console.log(updated);
+            let updated = JSON.stringify(valid, undefined, 4);
 
             Object.entries(valid).forEach(([key, value]) => {
                 localStorage.setItem('config.' + key, (value as string));
@@ -51,15 +50,15 @@ function ConfigurationModal() {
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Configuration</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 
                     <Form noValidate validated={valid} onSubmit={handleSubmit}>
 
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
-                            <Form.Label>Config</Form.Label>
-                            <Form.Control as="textarea" defaultValue={config} rows={3}/>
+                            <Form.Label>Main Config</Form.Label>
+                            <Form.Control as="textarea" defaultValue={config} rows={12}/>
                             <Form.Control.Feedback type="invalid">
                                 Invalid Config
                             </Form.Control.Feedback>

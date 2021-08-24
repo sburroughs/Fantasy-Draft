@@ -7,7 +7,7 @@ const SuggestedPlayers = (props: any) => {
     const [key, setKey] = useState("best")
     const players = [...props.players];
 
-    function sortByPoints(p1:Player, p2:Player) {
+    function sortByPoints(p1: Player, p2: Player) {
         return p2.relativeValue - p1.relativeValue;
     }
 
@@ -48,19 +48,19 @@ const SuggestedPlayers = (props: any) => {
               activeKey={key}
               onSelect={setKey}>
             <Tab eventKey="best" title="BEST">
-                <TopPlayerList players={getBestAvailable(5)} keyId={"best"}></TopPlayerList>
+                <TopPlayerList players={getBestAvailable(5)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="qb" title="QB">
-                <TopPlayerList players={getBestQB(5)} keyId={"qb"}></TopPlayerList>
+                <TopPlayerList players={getBestQB(5)} keyId={"qb"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="rb" title="RB">
-                <TopPlayerList players={getBestRB(5)} keyId={"rb"}></TopPlayerList>
+                <TopPlayerList players={getBestRB(5)} keyId={"rb"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="wr" title="WR">
-                <TopPlayerList players={getBestWR(5)} keyId={"wr"}></TopPlayerList>
+                <TopPlayerList players={getBestWR(5)} keyId={"wr"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="te" title="TE">
-                <TopPlayerList players={getBestTE(5)} keyId={"te"}></TopPlayerList>
+                <TopPlayerList players={getBestTE(5)} keyId={"te"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
         </Tabs>
     );

@@ -9,6 +9,8 @@ import Utility from "./Utility";
 import ConfigurationModal from "./ConfigurationModal";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayers from "./SuggestedPlayer";
+import draftConfig from './DefaultConfig.json';
+
 
 
 interface IProps {
@@ -114,6 +116,8 @@ export class DraftManager extends React.Component<IProps, IState> {
 
         const draftPlayers = (players: Player[]) => {
 
+            console.log(players);
+
             let updatedAvailablePlayers = availablePlayers;
             let updatedDraftPicks = draftPicks;
             let updatedDraftStatus = draftStatus;
@@ -172,9 +176,9 @@ export class DraftManager extends React.Component<IProps, IState> {
                 <Row>
                     <Col lg={4} md={12}>
                         <h2 className={"panel"}>Suggestions</h2>
-                        <SuggestedPlayers players={availablePlayers}/>
+                        <SuggestedPlayers players={availablePlayers} onSubmit={draftPlayers}/>
                         <h2 className={"panel"}>Teams</h2>
-                        <DraftedTeams teams={teams} selectedPick={draftStatus.currentTeam}/>
+                        <DraftedTeams teams={teams} selectedPick={draftStatus.currentTeam} draft={draftConfig}/>
                     </Col>
 
                     <Col lg={8} md={12}>
