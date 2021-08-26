@@ -7,18 +7,16 @@ import DataGrid, {
     Row as DataGridRow,
     RowRendererProps,
     RowsUpdateEvent,
-    SelectColumn,
     SortDirection
 } from 'react-data-grid';
 import 'react-data-grid/dist/react-data-grid.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './react-contextmenu.css';
 import './Player.css'
-import {NflTeam, NflTeams, Player, Team} from './Player';
+import {NflTeam, NflTeams, Player} from './Player';
 import {createPortal} from "react-dom";
 
 const columns: readonly Column<Player>[] = [
-    // SelectColumn,
     {
         key: 'adp',
         name: 'ADP',
@@ -165,8 +163,7 @@ function PlayerTable(props: IProp) {
         name: ''
     });
 
-
-    const playerSubset: readonly Player[] = useMemo(() => {
+    const playerSubset: Player[] = useMemo(() => {
 
         let filteredPlayers: Player[] = [...props.availablePlayers].filter(p => {
             return (
@@ -195,16 +192,6 @@ function PlayerTable(props: IProp) {
 
     }, [props.availablePlayers, sortDirection, sortColumn, filters]);
 
-
-    function clearFilters() {
-        setFilters({
-            position: 'All',
-            team: 'All',
-            name: ''
-        });
-    }
-
-
     const handleRowsUpdate = useCallback(({fromRow, toRow, updated}: RowsUpdateEvent<Partial<Player>>) => {
         const newRows = [...playerSubset];
 
@@ -213,34 +200,30 @@ function PlayerTable(props: IProp) {
         }
 
         props.onUpdatedAvailablePlayers(newRows);
-    }, [playerSubset, selectedRows]);
+    }, [props, playerSubset]);
 
     const handleSort = useCallback((columnKey: string, direction: SortDirection) => {
         setSort([columnKey, direction]);
     }, []);
 
 
-    function onPlayerDraft(e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) {
+    const onPlayerDraft = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
         let player: Player = playerSubset[rowIdx];
 
         props.onDraftPlayer([player]);
 
-        clearFilters();
+        setFilters({
+            position: 'All',
+            team: 'All',
+            name: ''
+        });
 
     }
 
-    function onPlayerTarget(e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) {
+    const onPlayerTarget = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
         let player: Player = playerSubset[rowIdx];
-
         console.log("targeting: " + player.name)
-
-
     }
-
-
-    function blankCallback(e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) {
-    }
-
 
     return (
         <div style={{flex: '1 1 auto', minHeight: '90vh'}}>

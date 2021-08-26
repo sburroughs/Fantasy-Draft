@@ -11,14 +11,19 @@ const SuggestedPlayers = (props: any) => {
         return p2.relativeValue - p1.relativeValue;
     }
 
+    function sortByADP(p1: Player, p2: Player) {
+        return p1.adp - p2.adp;
+    }
+
     function getBestAvailable(limit: number): Player[] {
         return [...players]
             .sort(sortByPoints)
             .splice(0, 5);
     }
 
-    function getTeamNeed(limit: number): Player[] {
+    function getADP(limit: number): Player[] {
         return [...players]
+            .sort(sortByADP)
             .splice(0, 5);
     }
 
@@ -49,6 +54,9 @@ const SuggestedPlayers = (props: any) => {
               onSelect={setKey}>
             <Tab eventKey="best" title="BEST">
                 <TopPlayerList players={getBestAvailable(5)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
+            </Tab>
+            <Tab eventKey="adp" title="ADP">
+                <TopPlayerList players={getADP(5)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="qb" title="QB">
                 <TopPlayerList players={getBestQB(5)} keyId={"qb"} onSubmit={props.onSubmit}></TopPlayerList>

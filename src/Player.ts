@@ -17,6 +17,7 @@ export interface IDraftStatus {
     currentTeam: any
     currentRound: any
     currentPick: any
+    currentRoundPick: any
 }
 
 

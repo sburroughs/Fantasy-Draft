@@ -1,21 +1,18 @@
 import React from "react";
-import Card from "react-bootstrap/Card"
-import ListGroup from "react-bootstrap/ListGroup"
+import {IDraftStatus} from "./Player";
 
-export interface IDraftStatus {
-    currentTeam: any
-    currentRound: any
-    currentPick: any
-}
-
-class DraftStatus extends React.Component<IDraftStatus, {}> {
-    constructor(props: any) {
-        super(props);
-    }
+class DraftStatus extends React.Component<{ status: IDraftStatus, playerTeam: number }, {}> {
 
     render() {
         return (
-            <div className={"panel"}>Drafting {this.props.currentRound}.{this.props.currentTeam } (#{this.props.currentPick})</div>
+            <div className={"panel"}>
+                <span>Drafting</span>
+                <span> {this.props.status.currentRound}.{this.props.status.currentRoundPick}</span>
+                <span> (#{this.props.status.currentPick})</span>
+                <span> Team {this.props.status.currentTeam}</span>
+                {this.props.status.currentTeam === this.props.playerTeam &&
+                <span> Your Turn</span>}
+            </div>
         );
     }
 

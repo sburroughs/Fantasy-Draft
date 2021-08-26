@@ -1,11 +1,11 @@
 import React from "react";
 import {Player} from "./Player";
 import './App.css';
-import {Tab, Tabs, Button} from "react-bootstrap";
+import {Button} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 
 export function TopPlayerList(props: { players: Player[], keyId: string, onSubmit: any }) {
-    const {players, keyId, onSubmit} = props;
+    const {players, onSubmit} = props;
 
     return <>
 
@@ -17,7 +17,7 @@ export function TopPlayerList(props: { players: Player[], keyId: string, onSubmi
                         Draft
                     </Button>
                     <p className={"m-0 p-0"}>{p.position} {p.name}</p>
-                    <small>Tier: {p.tier} | Value: {p.relativeValue}</small>
+                    <small>Tier: {p.tier} | Points: {p.points} | Value: {p.relativeValue}</small>
                 </ListGroup.Item>
             )}
         </ListGroup>

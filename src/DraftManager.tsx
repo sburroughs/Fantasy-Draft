@@ -10,7 +10,7 @@ import ConfigurationModal from "./ConfigurationModal";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayers from "./SuggestedPlayer";
 import draftConfig from './DefaultConfig.json';
-
+import {updateRV} from "./PlayerService";
 
 
 interface IProps {
@@ -47,7 +47,8 @@ export class DraftManager extends React.Component<IProps, IState> {
             return {
                 currentTeam: 1,
                 currentRound: 1,
-                currentPick: 1
+                currentPick: 1,
+                currentRoundPick: 1
             }
         };
 
@@ -59,7 +60,6 @@ export class DraftManager extends React.Component<IProps, IState> {
             draftStatus: defaultDraftStatus()
         };
 
-
     }
 
 
@@ -69,7 +69,7 @@ export class DraftManager extends React.Component<IProps, IState> {
 
         const nextTurnSnake = (draftStatus: IDraftStatus) => {
 
-            let updatedTeam, updatedRound;
+            let updatedTeam, updatedRound, updatedRoundPick;
             let updatedPick = draftStatus.currentPick + 1
 
             let count = updatedPick % (teams.length * 2);
@@ -77,36 +77,26 @@ export class DraftManager extends React.Component<IProps, IState> {
                 //hold
                 updatedTeam = draftStatus.currentTeam;
                 updatedRound = draftStatus.currentRound + 1;
+                updatedRoundPick = 1;
             } else if (count <= teams.length && count !== 0) {
                 //increase
                 updatedTeam = draftStatus.currentTeam + 1;
                 updatedRound = draftStatus.currentRound;
+                updatedRoundPick = draftStatus.currentRoundPick + 1;
             } else if (count > teams.length || count === 0) {
                 //decrease
                 updatedTeam = draftStatus.currentTeam - 1;
                 updatedRound = draftStatus.currentRound;
+                updatedRoundPick = draftStatus.currentRoundPick + 1
             }
 
             return {
                 currentTeam: updatedTeam,
                 currentRound: updatedRound,
+                currentRoundPick: updatedRoundPick,
                 currentPick: updatedPick
             }
         }
-
-        // const nextTurnSequential = (draftStatus: IDraftStatus) => {
-        //     // increment current pick
-        //     let updatedPick = draftStatus.currentPick + 1
-        //     // depending on draft style, switch to next team
-        //     let updatedTeam = draftStatus.currentTeam === teams.length ? 1 : draftStatus.currentTeam + 1;
-        //     let updatedRound = draftStatus.currentTeam === teams.length ? draftStatus.currentRound + 1 : draftStatus.currentRound;
-        //     return {
-        //         currentTeam: updatedTeam,
-        //         currentRound: updatedRound,
-        //         currentPick: updatedPick
-        //     }
-        // }
-
 
         const setAvailablePlayers = (players: any) => {
             this.setState({
@@ -115,8 +105,6 @@ export class DraftManager extends React.Component<IProps, IState> {
         }
 
         const draftPlayers = (players: Player[]) => {
-
-            console.log(players);
 
             let updatedAvailablePlayers = availablePlayers;
             let updatedDraftPicks = draftPicks;
@@ -144,6 +132,7 @@ export class DraftManager extends React.Component<IProps, IState> {
 
             }
 
+            updateRV(updatedAvailablePlayers);
 
             this.setState({
                 availablePlayers: updatedAvailablePlayers,
@@ -160,17 +149,14 @@ export class DraftManager extends React.Component<IProps, IState> {
                 <Row>
                     <Col lg={4} md={12}>
                         <Button id={"players-upload-parent"}>
-                            <PlayerUpload value={availablePlayers}
-                                          onChangeValue={setAvailablePlayers}/>
+                            <PlayerUpload onChangeValue={setAvailablePlayers}/>
                         </Button>
 
                         <ConfigurationModal/>
 
                     </Col>
                     <Col lg={8} md={12}>
-                        <DraftStatus currentRound={draftStatus.currentRound}
-                                     currentTeam={draftStatus.currentTeam}
-                                     currentPick={draftStatus.currentPick}/>
+                        <DraftStatus status={draftStatus} playerTeam={draftConfig.draftPosition}/>
                     </Col>
                 </Row>
                 <Row>

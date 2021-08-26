@@ -1,6 +1,7 @@
 .panel {
     margin-top: 10px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.25);
+    color: white;
 }
 
 h2.panel {
@@ -8,7 +9,7 @@ h2.panel {
 }
 
 .panel-scrollable {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.25);
     overflow: scroll;
     height: 300px;
 }
@@ -27,8 +28,7 @@ h2.panel {
 }
 
 .rv-4 .rv-filled {
-    background-color: rgba(255, 0, 0, 0.3);
-    color: white;
+    background-color: rgba(0, 128, 0, 0.1);
 }
 
 .rv-5 .rv-filled {
