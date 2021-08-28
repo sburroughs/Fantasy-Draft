@@ -12,7 +12,7 @@ export function TopPlayerList(props: { players: Player[], keyId: string, onSubmi
         <ListGroup>
             {players.length === 0 && <ListGroup.Item>Empty</ListGroup.Item>}
             {players.map((p) =>
-                <ListGroup.Item>
+                <ListGroup.Item key={p.id}>
                     <Button className={"float-right"} onClick={() => onSubmit([p])}>
                         Draft
                     </Button>

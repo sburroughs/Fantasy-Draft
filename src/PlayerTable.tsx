@@ -98,7 +98,7 @@ const columns: readonly Column<Player>[] = [
                 <select className="rdg-filter" value={p.value} onChange={e => p.onChange(e.target.value)}>
                     <option value="All">All</option>
                     {NflTeams.map((team: NflTeam) =>
-                        <option value={team.code}>{team.code}</option>
+                        <option key={team.code} value={team.code}>{team.code}</option>
                     )}
                 </select>
             </div>

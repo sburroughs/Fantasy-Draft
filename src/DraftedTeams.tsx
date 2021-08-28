@@ -49,9 +49,10 @@ export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: 
     render() {
         let {teams, currentTeam, draft} = this.props;
         let {key, lastForcePick} = this.state;
-        let teamIndex = (currentTeam - 1).toString();
 
-        let movePick = teamIndex !== lastForcePick;
+        const teamIndex = (currentTeam - 1).toString();
+
+        const movePick = teamIndex !== lastForcePick;
         if (movePick) {
             key = teamIndex;
             this.setState({
@@ -83,7 +84,7 @@ export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: 
                                     <TeamSummary players={team.players} config={draft}></TeamSummary>
                                 </ListGroup.Item>}
                                 {team.players.map((p, pIdx) =>
-                                    <ListGroup.Item>{"Round: " + (pIdx + 1) + " " + p.position + " " + p.name}</ListGroup.Item>
+                                    <ListGroup.Item key={p.id}>{"Round: " + (pIdx + 1) + " " + p.position + " " + p.name}</ListGroup.Item>
                                 ).reverse()}
                             </ListGroup>
                         </Tab>
