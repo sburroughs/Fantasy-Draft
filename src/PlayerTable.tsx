@@ -137,9 +137,18 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
         return "position-" + props.row.position.toLowerCase();
     }
 
+    function getAdpColor() {
+        return "adp-" + props.row.adp;
+    }
+
+    const getPrioritizedColumnStyles = () => getRowBackgroundClass() + " "
+        + getRowTierColor() + " "
+        + getPositionColor() + " "
+        + getAdpColor()
+
     return (
         <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
-            <div className={getRowBackgroundClass() + " " + getRowTierColor() + " " + getPositionColor()}>
+            <div className={getPrioritizedColumnStyles()}>
                 <DataGridRow {...props} />
             </div>
         </ContextMenuTrigger>
@@ -226,7 +235,7 @@ function PlayerTable(props: IProp) {
     }
 
     return (
-        <div style={{flex: '1 1 auto', minHeight: '90vh'}}>
+        <div style={{flex: '1 1 auto', minHeight: '88vh'}}>
             <AutoSizer>
                 {({height, width}) => (
                     <DataGrid

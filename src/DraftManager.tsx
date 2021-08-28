@@ -2,6 +2,7 @@ import React from "react";
 import PlayerTable from "./PlayerTable";
 import {Player, Team, IDraftStatus} from "./Player";
 import {Col, Container, Row} from "react-bootstrap";
+import Accordion from "react-bootstrap/Accordion"
 import {PlayerUpload} from "./PlayerUpload";
 import DraftedTeams from "./DraftedTeams";
 import DraftStatus from "./DraftStatus";
@@ -11,6 +12,7 @@ import Button from "react-bootstrap/Button";
 import SuggestedPlayers from "./SuggestedPlayer";
 import draftConfig from './DefaultConfig.json';
 import {updateRV} from "./PlayerService";
+import AddPlayerModal from "./AddPlayerModal";
 
 
 interface IProps {
@@ -22,6 +24,17 @@ interface IState {
     draftPicks: Player[];
     teams: Team[];
     draftStatus: IDraftStatus;
+}
+
+function DraftPicks(props: { picks: Player[] }) {
+    const picks = [...props.picks];
+    const listItems = picks.reverse().map((p) =>
+        <li>{p.name}</li>
+    );
+
+    return <div className={"panel-scrollable"}>
+        <ol reversed>{listItems}</ol>
+    </div>;
 }
 
 export class DraftManager extends React.Component<IProps, IState> {
@@ -98,6 +111,90 @@ export class DraftManager extends React.Component<IProps, IState> {
             }
         }
 
+        const previousTurnSnake = (draftStatus: IDraftStatus) => {
+
+            let updatedTeam, updatedRound, updatedRoundPick;
+            let updatedPick = draftStatus.currentPick - 1
+
+            let count = updatedPick % (teams.length * 2);
+            if (count === teams.length || count === 0) {
+                //hold
+                updatedTeam = draftStatus.currentTeam;
+                updatedRound = draftStatus.currentRound - 1;
+                updatedRoundPick = teams.length;
+            } else if (count <= teams.length && count !== 0) {
+                //decrease
+                updatedTeam = draftStatus.currentTeam - 1;
+                updatedRound = draftStatus.currentRound;
+                updatedRoundPick = draftStatus.currentRoundPick - 1;
+            } else if (count > teams.length || count === 0) {
+                //increase
+                updatedTeam = draftStatus.currentTeam + 1;
+                updatedRound = draftStatus.currentRound;
+                updatedRoundPick = draftStatus.currentRoundPick - 1
+            }
+
+            return {
+                currentTeam: updatedTeam,
+                currentRound: updatedRound,
+                currentRoundPick: updatedRoundPick,
+                currentPick: updatedPick
+            }
+        }
+
+
+        const undoDraftPicks = (picks: number) => {
+
+            let updatedAvailablePlayers = availablePlayers;
+            let updatedDraftPicks = [...draftPicks];
+            let updatedDraftStatus = draftStatus;
+            let updatedTeams: Team[] = teams;
+
+            if (draftStatus.currentRound >= 1 && draftStatus.currentPick > 1) {
+
+                for (let i = 1; i <= picks; i++) {
+
+                    updatedDraftStatus = previousTurnSnake(updatedDraftStatus);
+
+                    // remove player from team back to available players .
+                    let teamIndex = updatedDraftStatus.currentTeam - 1
+                    console.log("Index: " + teamIndex)
+                    let currentTeam: Team = teams[teamIndex];
+                    let lastPlayer = currentTeam.players.pop();
+                    updatedDraftPicks.pop();
+
+                    if (lastPlayer) {
+
+                        updatedTeams[teamIndex] = currentTeam;
+
+                        updatedAvailablePlayers.push(lastPlayer);
+
+                    }
+
+                }
+
+                updateRV(updatedAvailablePlayers);
+
+                this.setState({
+                    availablePlayers: updatedAvailablePlayers,
+                    draftPicks: updatedDraftPicks,
+                    teams: updatedTeams,
+                    draftStatus: updatedDraftStatus
+                })
+
+            }
+
+
+        }
+
+        const addPlayer = (player: Player) => {
+            let updated: Player[] = availablePlayers;
+            updated.push(player);
+            this.setState({
+                availablePlayers: updated
+            });
+        }
+
         const setAvailablePlayers = (players: any) => {
             this.setState({
                 availablePlayers: players
@@ -154,6 +251,13 @@ export class DraftManager extends React.Component<IProps, IState> {
 
                         <ConfigurationModal/>
 
+                        <Button onClick={() => undoDraftPicks(1)}>
+                            Undo Pick
+                        </Button>
+
+
+                        <AddPlayerModal onSubmit={addPlayer}></AddPlayerModal>
+
                     </Col>
                     <Col lg={8} md={12}>
                         <DraftStatus status={draftStatus} playerTeam={draftConfig.draftPosition}/>
@@ -161,21 +265,51 @@ export class DraftManager extends React.Component<IProps, IState> {
                 </Row>
                 <Row>
                     <Col lg={4} md={12}>
-                        <h2 className={"panel"}>Suggestions</h2>
-                        <SuggestedPlayers players={availablePlayers} onSubmit={draftPlayers}/>
-                        <h2 className={"panel"}>Teams</h2>
-                        <DraftedTeams teams={teams} selectedPick={draftStatus.currentTeam} draft={draftConfig}/>
+
+                        <Accordion defaultActiveKey="0" flush className={'my-2'}>
+                            <Accordion.Item eventKey="0">
+                                <Accordion.Header>Suggestions</Accordion.Header>
+                                <Accordion.Body>
+                                    <SuggestedPlayers players={availablePlayers}
+                                                      displayCount={5}
+                                                      onSubmit={draftPlayers}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+
+
+                        <Accordion defaultActiveKey="0" flush className={'mb-2'}>
+                            <Accordion.Item eventKey="0">
+                                <Accordion.Header>Teams</Accordion.Header>
+                                <Accordion.Body>
+                                    <DraftedTeams teams={teams}
+                                                  currentTeam={draftStatus.currentTeam}
+                                                  draft={draftConfig}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                            <Accordion.Item eventKey="1">
+                                <Accordion.Header>Picks</Accordion.Header>
+                                <Accordion.Body>
+                                    <DraftPicks picks={draftPicks}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+
                     </Col>
 
                     <Col lg={8} md={12}>
-                        <h2 className={"panel"}>Players</h2>
-                        {/*<DraftByText availablePlayers={availablePlayers}*/}
-                        {/*             draftedPlayers={draftPicks}*/}
-                        {/*             onSubmit={draftPlayers}/>*/}
 
-                        <PlayerTable availablePlayers={availablePlayers}
-                                     onDraftPlayer={draftPlayers}
-                                     onUpdatedAvailablePlayers={setAvailablePlayers}/>
+                        <Accordion defaultActiveKey="0" flush className={'mt-2'}>
+                            <Accordion.Item eventKey="0">
+                                <Accordion.Header>Players</Accordion.Header>
+                                <Accordion.Body>
+                                    <PlayerTable availablePlayers={availablePlayers}
+                                                 onDraftPlayer={draftPlayers}
+                                                 onUpdatedAvailablePlayers={setAvailablePlayers}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+
                     </Col>
                 </Row>
             </Container>

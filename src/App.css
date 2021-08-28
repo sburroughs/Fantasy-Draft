@@ -45,3 +45,31 @@
 .tab-content {
   background-color: #20a0ff;
 }
+
+.accordion .accordion-body {
+  background-color: lightsteelblue;
+  padding: 0;
+}
+
+.accordion-flush .accordion-item .accordion-button {
+  background-color: #5f6165;
+  color: white;
+}
+
+/*.accordion-header .accordion-button .collapsed {*/
+/*  background-color: #5f6165;*/
+/*  color: white;*/
+/*}*/
+
+/*.accordion-header .accordion-button:not(.collapsed) {*/
+/*  background-color: #5f6165;*/
+/*  color: white;*/
+/*}*/
+
+
+
+
+
+.float-right {
+  float: right
+}

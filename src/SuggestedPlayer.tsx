@@ -3,7 +3,7 @@ import {Tab, Tabs} from 'react-bootstrap';
 import {Player} from "./Player";
 import {TopPlayerList} from "./TopPlayerList";
 
-const SuggestedPlayers = (props: any) => {
+const SuggestedPlayers = (props: { players: Player[], displayCount: number, onSubmit: any }) => {
     const [key, setKey] = useState("best")
     const players = [...props.players];
 
@@ -18,13 +18,13 @@ const SuggestedPlayers = (props: any) => {
     function getBestAvailable(limit: number): Player[] {
         return [...players]
             .sort(sortByPoints)
-            .splice(0, 5);
+            .splice(0, limit);
     }
 
     function getADP(limit: number): Player[] {
         return [...players]
             .sort(sortByADP)
-            .splice(0, 5);
+            .splice(0, limit);
     }
 
     function getBestQB(limit: number): Player[] {
@@ -36,39 +36,43 @@ const SuggestedPlayers = (props: any) => {
     function getBestRB(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "RB")
+            .splice(0, limit);
     }
 
     function getBestWR(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "WR")
+            .splice(0, limit);
     }
 
     function getBestTE(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "TE")
+            .splice(0, limit);
     }
 
     return (
         <Tabs id="suggested-player-tabs"
               activeKey={key}
-              onSelect={setKey}>
+            // @ts-ignore
+              onSelect={(k) => setKey(k)}>
             <Tab eventKey="best" title="BEST">
-                <TopPlayerList players={getBestAvailable(5)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestAvailable(props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="adp" title="ADP">
-                <TopPlayerList players={getADP(5)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getADP(props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="qb" title="QB">
-                <TopPlayerList players={getBestQB(5)} keyId={"qb"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestQB(props.displayCount)} keyId={"qb"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="rb" title="RB">
-                <TopPlayerList players={getBestRB(5)} keyId={"rb"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestRB(props.displayCount)} keyId={"rb"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="wr" title="WR">
-                <TopPlayerList players={getBestWR(5)} keyId={"wr"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestWR(props.displayCount)} keyId={"wr"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="te" title="TE">
-                <TopPlayerList players={getBestTE(5)} keyId={"te"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestTE(props.displayCount)} keyId={"te"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
         </Tabs>
     );

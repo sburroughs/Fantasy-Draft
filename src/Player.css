@@ -1,6 +1,6 @@
 .panel {
     margin-top: 10px;
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: #5f6165;
     color: white;
 }
 
@@ -9,9 +9,11 @@ h2.panel {
 }
 
 .panel-scrollable {
-    background-color: rgba(255, 255, 255, 0.25);
-    overflow: scroll;
-    height: 300px;
+    background-color: lightsteelblue;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-height: 50px;
+    max-height: 300px;
 }
 
 /*relative value*/
