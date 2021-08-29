@@ -115,13 +115,13 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
         let color;
         if (v > 100)
             color = '1'
-        else if (v > 80)
-            color = '2'
         else if (v > 60)
+            color = '2'
+        else if (v > 20)
             color = '3'
-        else if (v > 40)
-            color = '4'
         else if (v > 0)
+            color = '4'
+        else if (v > -20)
             color = '5'
         else
             color = '6'
@@ -137,14 +137,9 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
         return "position-" + props.row.position.toLowerCase();
     }
 
-    function getAdpColor() {
-        return "adp-" + props.row.adp;
-    }
-
     const getPrioritizedColumnStyles = () => getRowBackgroundClass() + " "
         + getRowTierColor() + " "
-        + getPositionColor() + " "
-        + getAdpColor()
+        + getPositionColor()
 
     return (
         <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>

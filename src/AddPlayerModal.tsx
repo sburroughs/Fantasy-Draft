@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Modal from "react-bootstrap/Modal"
 import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
-import {Player} from "./Player";
+import {NflTeam, NflTeams, Player} from "./Player";
 
 function ConfigurationModal(props: { onSubmit: any }) {
     const [show, setShow] = useState(false);
@@ -17,19 +17,21 @@ function ConfigurationModal(props: { onSubmit: any }) {
 
         const form = event.currentTarget;
 
-        let value = form[0].value;
-
-        console.log(value);
+        let name = form[0].value;
+        let position = form[1].value;
+        let points = Number(form[2].value);
+        let adp = Number(form[3].value);
+        let team = form[4].value;
 
         const player: Player = {
             id: 0,
-            name: value,
-            adp: 999,
-            points: 0,
+            name: name,
+            adp: adp,
+            points: points,
+            team: team,
+            position: position,
             relativeValue: 0,
-            position: "ASS",
-            tier: 0,
-            team: "BUTT"
+            tier: 0
         }
         props.onSubmit(player);
 
@@ -53,9 +55,25 @@ function ConfigurationModal(props: { onSubmit: any }) {
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Name</Form.Label>
                             <Form.Control as="input" defaultValue={""}/>
-                            <Form.Control.Feedback type="invalid">
-                                Invalid Name
-                            </Form.Control.Feedback>
+                            <Form.Label>Position</Form.Label>
+                            <Form.Select aria-label="Select Player Position">
+                                <option value="QB">QB</option>
+                                <option value="RB">RB</option>
+                                <option value="WB">WR</option>
+                                <option value="TE">TE</option>
+                                <option value="K">K</option>
+                                <option value="DEF">DEF</option>
+                            </Form.Select>
+                            <Form.Label>Points</Form.Label>
+                            <Form.Control as="input" defaultValue={"0"}/>
+                            <Form.Label>ADP</Form.Label>
+                            <Form.Control as="input" defaultValue={"999"}/>
+                            <Form.Label>Teams</Form.Label>
+                            <Form.Select aria-label="Select Player Team">
+                                {NflTeams.map((team: NflTeam) =>
+                                    <option key={team.code} value={team.code}>{team.code}</option>
+                                )}
+                            </Form.Select>
                         </Form.Group>
                         <Button variant="secondary" onClick={handleClose}>
                             Close

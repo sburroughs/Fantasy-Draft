@@ -24,8 +24,8 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
     let kPoint: number[] = k.slice(0, 32).map((p: Player) => p.points);
 
     let qbCkValue = draftConfig.roster.starting.qb * draftConfig.teamCount;
-    let rbCkValue = draftConfig.roster.starting.rb * draftConfig.teamCount;
-    let wrCkValue = draftConfig.roster.starting.wr * draftConfig.teamCount;
+    let rbCkValue = Math.round(draftConfig.roster.starting.rb * draftConfig.teamCount);
+    let wrCkValue = Math.round(draftConfig.roster.starting.wr * draftConfig.teamCount);
     let teCkValue = draftConfig.roster.starting.te * draftConfig.teamCount;
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
 

@@ -11,7 +11,6 @@ import ConfigurationModal from "./ConfigurationModal";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayers from "./SuggestedPlayer";
 import draftConfig from './DefaultConfig.json';
-import {updateRV} from "./PlayerService";
 import AddPlayerModal from "./AddPlayerModal";
 
 
@@ -158,22 +157,18 @@ export class DraftManager extends React.Component<IProps, IState> {
 
                     // remove player from team back to available players .
                     let teamIndex = updatedDraftStatus.currentTeam - 1
-                    console.log("Index: " + teamIndex)
                     let currentTeam: Team = teams[teamIndex];
                     let lastPlayer = currentTeam.players.pop();
                     updatedDraftPicks.pop();
 
                     if (lastPlayer) {
-
                         updatedTeams[teamIndex] = currentTeam;
-
                         updatedAvailablePlayers.push(lastPlayer);
-
                     }
 
                 }
 
-                updateRV(updatedAvailablePlayers);
+                // updateRV(updatedAvailablePlayers);
 
                 this.setState({
                     availablePlayers: updatedAvailablePlayers,
@@ -229,7 +224,7 @@ export class DraftManager extends React.Component<IProps, IState> {
 
             }
 
-            updateRV(updatedAvailablePlayers);
+            // updateRV(updatedAvailablePlayers);
 
             this.setState({
                 availablePlayers: updatedAvailablePlayers,
