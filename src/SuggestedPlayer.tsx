@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import {Tab, Tabs} from 'react-bootstrap';
-import {Player} from "./Player";
+import {Player, Team} from "./Player";
 import {TopPlayerList} from "./TopPlayerList";
 
-const SuggestedPlayers = (props: { players: Player[], displayCount: number, onSubmit: any }) => {
+const SuggestedPlayers = (props: { players: Player[], displayCount: number, onSubmit: any, currentTeam: Team }) => {
     const [key, setKey] = useState("best")
     const players = [...props.players];
 
@@ -15,8 +15,12 @@ const SuggestedPlayers = (props: { players: Player[], displayCount: number, onSu
         return p1.adp - p2.adp;
     }
 
-    function getBestAvailable(limit: number): Player[] {
+    function getBestAvailable(team: Team, limit: number): Player[] {
         return [...players]
+            // remove kickers and defense. We don't desire them in Best suggestions, ever.
+            .filter((p:Player)=> !(p.position === "K" || p.position === "DEF"))
+            // remove qbs from best if already drafted
+            .filter((p:Player)=> !(p.position === "QB" && team.players.some(p => p.position === 'QB')))
             .sort(sortByPoints)
             .splice(0, limit);
     }
@@ -56,11 +60,11 @@ const SuggestedPlayers = (props: { players: Player[], displayCount: number, onSu
               activeKey={key}
             // @ts-ignore
               onSelect={(k) => setKey(k)}>
-            <Tab eventKey="best" title="BEST">
-                <TopPlayerList players={getBestAvailable(props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
-            </Tab>
             <Tab eventKey="adp" title="ADP">
                 <TopPlayerList players={getADP(props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
+            </Tab>
+            <Tab eventKey="best" title="BEST">
+                <TopPlayerList players={getBestAvailable(props.currentTeam, props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
             <Tab eventKey="qb" title="QB">
                 <TopPlayerList players={getBestQB(props.displayCount)} keyId={"qb"} onSubmit={props.onSubmit}></TopPlayerList>

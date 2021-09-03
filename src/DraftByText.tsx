@@ -30,8 +30,8 @@ const DraftByText = (props: IProps) => {
 
             let startAtIndex = Utility.standardizeName(firstDraftedPlayer.name) === Utility.standardizeName(playerNames[0]);
             if (startAtIndex) {
-                //set index on start by finding last successful drafted player
-                console.log(playerNames[draftedPlayers.length - 1]);
+                // set index on start by finding last successful drafted player.
+                // this is a workaround used only the draftbytext module
                 let startAtIndex = playerNames.findIndex((name) => Utility.standardizeName(name) === Utility.standardizeName(playerNames[draftedPlayers.length - 1]));
                 if (startAtIndex >= 0) {
                     draftedIndex = startAtIndex;
@@ -39,7 +39,6 @@ const DraftByText = (props: IProps) => {
 
                     //remove already drafted players
                     playerNames = playerNames.splice(draftedIndex + 1);
-
                     console.log("Removed players already drafted: " + draftedIndex);
                 }
             }

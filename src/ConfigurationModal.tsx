@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal"
 import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 
-function ConfigurationModal() {
+function ConfigurationModal(props: {defaultConfig: any}) {
     const [show, setShow] = useState(false);
     const [valid, setValid] = useState(false);
 
@@ -12,7 +12,7 @@ function ConfigurationModal() {
     const handleShow = () => setShow(true);
 
     const [config, setConfig] = React.useState(
-        localStorage.getItem('config') || '{}'
+        localStorage.getItem('config') || JSON.stringify(props.defaultConfig, undefined, 4)
     );
 
     const handleSubmit = (event: any) => {
@@ -25,11 +25,6 @@ function ConfigurationModal() {
         try {
             let valid = JSON.parse(form[0].value);
             let updated = JSON.stringify(valid, undefined, 4);
-
-            Object.entries(valid).forEach(([key, value]) => {
-                localStorage.setItem('config.' + key, (value as string));
-            })
-
             localStorage.setItem('config', updated);
             setConfig(updated);
             setValid(true);

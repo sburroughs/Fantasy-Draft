@@ -12,6 +12,7 @@ import Button from "react-bootstrap/Button";
 import SuggestedPlayers from "./SuggestedPlayer";
 import draftConfig from './DefaultConfig.json';
 import AddPlayerModal from "./AddPlayerModal";
+import {nextTurnSnake, previousTurnSnake} from "./DraftProgressor";
 
 
 interface IProps {
@@ -43,14 +44,15 @@ export class DraftManager extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
 
-        const getTeamCount = (): number => {
-            return localStorage.getItem("config")
-                ? localStorage.getItem("config.teamCount")
-                : props.defaultTeamCount;
+        const getConfig = (): any => {
+            return localStorage.getItem("config") ?
+                JSON.parse(localStorage.getItem("config") || "{}") :
+                draftConfig;
         };
 
         const populateTeams = (): Team[] => {
-            return Array.from({length: getTeamCount()}, () => ({
+            const count = getConfig().teamCount;
+            return Array.from({length: count}, () => ({
                 players: []
             }));
         };
@@ -64,7 +66,6 @@ export class DraftManager extends React.Component<IProps, IState> {
             }
         };
 
-        //TODO: calling getTeamCount twice is lazy
         this.state = {
             availablePlayers: [],
             draftPicks: [],
@@ -78,109 +79,6 @@ export class DraftManager extends React.Component<IProps, IState> {
     render() {
 
         let {availablePlayers, draftPicks, teams, draftStatus} = this.state;
-
-        const nextTurnSnake = (draftStatus: IDraftStatus) => {
-
-            let updatedTeam, updatedRound, updatedRoundPick;
-            let updatedPick = draftStatus.currentPick + 1
-
-            let count = updatedPick % (teams.length * 2);
-            if (count === teams.length + 1 || count === 1) {
-                //hold
-                updatedTeam = draftStatus.currentTeam;
-                updatedRound = draftStatus.currentRound + 1;
-                updatedRoundPick = 1;
-            } else if (count <= teams.length && count !== 0) {
-                //increase
-                updatedTeam = draftStatus.currentTeam + 1;
-                updatedRound = draftStatus.currentRound;
-                updatedRoundPick = draftStatus.currentRoundPick + 1;
-            } else if (count > teams.length || count === 0) {
-                //decrease
-                updatedTeam = draftStatus.currentTeam - 1;
-                updatedRound = draftStatus.currentRound;
-                updatedRoundPick = draftStatus.currentRoundPick + 1
-            }
-
-            return {
-                currentTeam: updatedTeam,
-                currentRound: updatedRound,
-                currentRoundPick: updatedRoundPick,
-                currentPick: updatedPick
-            }
-        }
-
-        const previousTurnSnake = (draftStatus: IDraftStatus) => {
-
-            let updatedTeam, updatedRound, updatedRoundPick;
-            let updatedPick = draftStatus.currentPick - 1
-
-            let count = updatedPick % (teams.length * 2);
-            if (count === teams.length || count === 0) {
-                //hold
-                updatedTeam = draftStatus.currentTeam;
-                updatedRound = draftStatus.currentRound - 1;
-                updatedRoundPick = teams.length;
-            } else if (count <= teams.length && count !== 0) {
-                //decrease
-                updatedTeam = draftStatus.currentTeam - 1;
-                updatedRound = draftStatus.currentRound;
-                updatedRoundPick = draftStatus.currentRoundPick - 1;
-            } else if (count > teams.length || count === 0) {
-                //increase
-                updatedTeam = draftStatus.currentTeam + 1;
-                updatedRound = draftStatus.currentRound;
-                updatedRoundPick = draftStatus.currentRoundPick - 1
-            }
-
-            return {
-                currentTeam: updatedTeam,
-                currentRound: updatedRound,
-                currentRoundPick: updatedRoundPick,
-                currentPick: updatedPick
-            }
-        }
-
-
-        const undoDraftPicks = (picks: number) => {
-
-            let updatedAvailablePlayers = availablePlayers;
-            let updatedDraftPicks = [...draftPicks];
-            let updatedDraftStatus = draftStatus;
-            let updatedTeams: Team[] = teams;
-
-            if (draftStatus.currentRound >= 1 && draftStatus.currentPick > 1) {
-
-                for (let i = 1; i <= picks; i++) {
-
-                    updatedDraftStatus = previousTurnSnake(updatedDraftStatus);
-
-                    // remove player from team back to available players .
-                    let teamIndex = updatedDraftStatus.currentTeam - 1
-                    let currentTeam: Team = teams[teamIndex];
-                    let lastPlayer = currentTeam.players.pop();
-                    updatedDraftPicks.pop();
-
-                    if (lastPlayer) {
-                        updatedTeams[teamIndex] = currentTeam;
-                        updatedAvailablePlayers.push(lastPlayer);
-                    }
-
-                }
-
-                // updateRV(updatedAvailablePlayers);
-
-                this.setState({
-                    availablePlayers: updatedAvailablePlayers,
-                    draftPicks: updatedDraftPicks,
-                    teams: updatedTeams,
-                    draftStatus: updatedDraftStatus
-                })
-
-            }
-
-
-        }
 
         const addPlayer = (player: Player) => {
             let updated: Player[] = availablePlayers;
@@ -220,7 +118,7 @@ export class DraftManager extends React.Component<IProps, IState> {
 
                 updatedDraftPicks.push(player);
 
-                updatedDraftStatus = nextTurnSnake(updatedDraftStatus);
+                updatedDraftStatus = nextTurnSnake(updatedDraftStatus, teams);
 
             }
 
@@ -235,6 +133,46 @@ export class DraftManager extends React.Component<IProps, IState> {
 
         }
 
+        const undoDraftPicks = (picks: number) => {
+
+            let updatedAvailablePlayers = availablePlayers;
+            let updatedDraftPicks = [...draftPicks];
+            let updatedDraftStatus = draftStatus;
+            let updatedTeams: Team[] = teams;
+
+            if (draftStatus.currentRound >= 1 && draftStatus.currentPick > 1) {
+
+                for (let i = 1; i <= picks; i++) {
+
+                    updatedDraftStatus = previousTurnSnake(updatedDraftStatus, teams);
+
+                    // remove player from team back to available players .
+                    let teamIndex = updatedDraftStatus.currentTeam - 1
+                    let currentTeam: Team = teams[teamIndex];
+                    let lastPlayer = currentTeam.players.pop();
+                    updatedDraftPicks.pop();
+
+                    if (lastPlayer) {
+                        updatedTeams[teamIndex] = currentTeam;
+                        updatedAvailablePlayers.push(lastPlayer);
+                    }
+
+                }
+
+                // updateRV(updatedAvailablePlayers);
+
+                this.setState({
+                    availablePlayers: updatedAvailablePlayers,
+                    draftPicks: updatedDraftPicks,
+                    teams: updatedTeams,
+                    draftStatus: updatedDraftStatus
+                })
+
+            }
+
+
+        }
+
 
         return (
             <Container fluid>
@@ -244,7 +182,7 @@ export class DraftManager extends React.Component<IProps, IState> {
                             <PlayerUpload onChangeValue={setAvailablePlayers}/>
                         </Button>
 
-                        <ConfigurationModal/>
+                        <ConfigurationModal defaultConfig={draftConfig}/>
 
                         <Button onClick={() => undoDraftPicks(1)}>
                             Undo Pick
@@ -266,6 +204,7 @@ export class DraftManager extends React.Component<IProps, IState> {
                                 <Accordion.Header>Suggestions</Accordion.Header>
                                 <Accordion.Body>
                                     <SuggestedPlayers players={availablePlayers}
+                                                      currentTeam={teams[draftStatus.currentTeam - 1]}
                                                       displayCount={5}
                                                       onSubmit={draftPlayers}/>
                                 </Accordion.Body>
