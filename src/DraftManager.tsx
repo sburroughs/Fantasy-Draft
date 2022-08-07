@@ -49,9 +49,21 @@ export class DraftManager extends React.Component<IProps, IState> {
                 JSON.parse(localStorage.getItem("config") || "{}") :
                 draftConfig;
         };
+        const config = getConfig();
+
+        const draftState = (): any => {
+            return localStorage.getItem("draft") ?
+                JSON.parse(localStorage.getItem("draft") || "{}") :
+                {
+                    availablePlayers: [],
+                    draftPicks: [],
+                    teams: populateTeams(),
+                    draftStatus: defaultDraftStatus()
+                }
+        };
 
         const populateTeams = (): Team[] => {
-            const count = getConfig().teamCount;
+            const count = config.teamCount;
             return Array.from({length: count}, () => ({
                 players: []
             }));
@@ -67,10 +79,10 @@ export class DraftManager extends React.Component<IProps, IState> {
         };
 
         this.state = {
-            availablePlayers: [],
-            draftPicks: [],
-            teams: populateTeams(),
-            draftStatus: defaultDraftStatus()
+            availablePlayers: draftState().availablePlayers ? draftState().availablePlayers : [],
+            draftPicks: draftState().draftPicks ? draftState().draftPicks : [],
+            teams: draftState().teams ? draftState().teams : populateTeams(),
+            draftStatus: draftState().draftStatus ? draftState().draftStatus : defaultDraftStatus()
         };
 
     }
@@ -123,13 +135,16 @@ export class DraftManager extends React.Component<IProps, IState> {
             }
 
             // updateRV(updatedAvailablePlayers);
-
-            this.setState({
+            let updated = {
                 availablePlayers: updatedAvailablePlayers,
                 draftPicks: updatedDraftPicks,
                 teams: updatedTeams,
                 draftStatus: updatedDraftStatus
-            })
+            };
+
+            localStorage.setItem('draft', JSON.stringify(updated, undefined, 4));
+
+            this.setState(updated)
 
         }
 
@@ -140,15 +155,15 @@ export class DraftManager extends React.Component<IProps, IState> {
             let updatedDraftStatus = draftStatus;
             let updatedTeams: Team[] = teams;
 
-            if (draftStatus.currentRound >= 1 && draftStatus.currentPick > 1) {
+            for (let i = 1; i <= picks; i++) {
 
-                for (let i = 1; i <= picks; i++) {
+                if (updatedDraftStatus.currentRound >= 1 && updatedDraftStatus.currentPick > 1) {
 
-                    updatedDraftStatus = previousTurnSnake(updatedDraftStatus, teams);
+                    updatedDraftStatus = previousTurnSnake(updatedDraftStatus, updatedTeams);
 
                     // remove player from team back to available players .
                     let teamIndex = updatedDraftStatus.currentTeam - 1
-                    let currentTeam: Team = teams[teamIndex];
+                    let currentTeam: Team = updatedTeams[teamIndex];
                     let lastPlayer = currentTeam.players.pop();
                     updatedDraftPicks.pop();
 
@@ -160,16 +175,18 @@ export class DraftManager extends React.Component<IProps, IState> {
                 }
 
                 // updateRV(updatedAvailablePlayers);
-
-                this.setState({
-                    availablePlayers: updatedAvailablePlayers,
-                    draftPicks: updatedDraftPicks,
-                    teams: updatedTeams,
-                    draftStatus: updatedDraftStatus
-                })
-
             }
 
+            let updated = {
+                availablePlayers: updatedAvailablePlayers,
+                draftPicks: updatedDraftPicks,
+                teams: updatedTeams,
+                draftStatus: updatedDraftStatus
+            };
+
+            localStorage.setItem('draft', JSON.stringify(updated, undefined, 4));
+
+            this.setState(updated)
 
         }
 
@@ -183,6 +200,11 @@ export class DraftManager extends React.Component<IProps, IState> {
                         </Button>
 
                         <ConfigurationModal defaultConfig={draftConfig}/>
+
+
+                        <Button onClick={() => undoDraftPicks(1000)}>
+                            Restart Draft
+                        </Button>
 
                         <Button onClick={() => undoDraftPicks(1)}>
                             Undo Pick
