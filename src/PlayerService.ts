@@ -29,11 +29,11 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
     let teCkValue = draftConfig.roster.starting.te * draftConfig.teamCount;
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
 
-    let qbTiers: number[][] = ckmeans(qbPoint, 10);
-    let rbTiers: number[][] = ckmeans(rbPoint, 10);
-    let wrTiers: number[][] = ckmeans(wrPoint, 10);
-    let teTiers: number[][] = ckmeans(tePoint, 10);
-    let kTiers: number[][] = ckmeans(kPoint, 10);
+    let qbTiers: number[][] = ckmeans(qbPoint, draftConfig.compute.tiers.qb);
+    let rbTiers: number[][] = ckmeans(rbPoint, draftConfig.compute.tiers.rb);
+    let wrTiers: number[][] = ckmeans(wrPoint, draftConfig.compute.tiers.wr);
+    let teTiers: number[][] = ckmeans(tePoint, draftConfig.compute.tiers.te);
+    let kTiers: number[][] = ckmeans(kPoint, draftConfig.compute.tiers.k);
 
     // update players tiers
     updateTierAndRv(qb, qbTiers, qbCkValue);

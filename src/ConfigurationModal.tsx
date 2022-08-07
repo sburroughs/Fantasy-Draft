@@ -11,8 +11,15 @@ function ConfigurationModal(props: {defaultConfig: any}) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const readDefaultConfig = () => JSON.stringify(props.defaultConfig, undefined, 4);
+
+    const handleDefaultConfig = () => {
+        setConfig(readDefaultConfig);
+        setShow(false)
+    }
+
     const [config, setConfig] = React.useState(
-        localStorage.getItem('config') || JSON.stringify(props.defaultConfig, undefined, 4)
+        localStorage.getItem('config') || readDefaultConfig
     );
 
     const handleSubmit = (event: any) => {
@@ -60,6 +67,9 @@ function ConfigurationModal(props: {defaultConfig: any}) {
                         </Form.Group>
                         <Button variant="secondary" onClick={handleClose}>
                             Close
+                        </Button>
+                        <Button variant="primary" onClick={handleDefaultConfig}>
+                            Default Configuration
                         </Button>
                         <Button variant="primary" type="submit">
                             Save Changes
