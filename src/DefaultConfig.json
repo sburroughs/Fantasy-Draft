@@ -30,5 +30,10 @@
       "k": 10,
       "def": 10
     }
+  },
+  "display": {
+    "suggestions": {
+      "show": 5
+    }
   }
 }

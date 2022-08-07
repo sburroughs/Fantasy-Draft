@@ -92,6 +92,13 @@ export class DraftManager extends React.Component<IProps, IState> {
 
         let {availablePlayers, draftPicks, teams, draftStatus} = this.state;
 
+        const getConfig = (): any => {
+            return localStorage.getItem("config") ?
+                JSON.parse(localStorage.getItem("config") || "{}") :
+                draftConfig;
+        };
+        const config = getConfig();
+
         const addPlayer = (player: Player) => {
             let updated: Player[] = availablePlayers;
             updated.push(player);
@@ -227,7 +234,7 @@ export class DraftManager extends React.Component<IProps, IState> {
                                 <Accordion.Body>
                                     <SuggestedPlayers players={availablePlayers}
                                                       currentTeam={teams[draftStatus.currentTeam - 1]}
-                                                      displayCount={5}
+                                                      displayCount={config.display.suggestions.show}
                                                       onSubmit={draftPlayers}/>
                                 </Accordion.Body>
                             </Accordion.Item>
