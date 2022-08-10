@@ -102,9 +102,16 @@ export class DraftManager extends React.Component<IProps, IState> {
         const addPlayer = (player: Player) => {
             let updated: Player[] = availablePlayers;
             updated.push(player);
+
+            localStorage.setItem('draft', JSON.stringify(updated, undefined, 4));
+
             this.setState({
                 availablePlayers: updated
             });
+
+            console.log("YEAHBUD");
+
+
         }
 
         const setAvailablePlayers = (players: any) => {
@@ -218,7 +225,7 @@ export class DraftManager extends React.Component<IProps, IState> {
                         </Button>
 
 
-                        <AddPlayerModal onSubmit={addPlayer}></AddPlayerModal>
+                        <AddPlayerModal onAdd={addPlayer} onDraft={draftPlayers}></AddPlayerModal>
 
                     </Col>
                     <Col lg={8} md={12}>

@@ -80,6 +80,8 @@ const columns: readonly Column<Player>[] = [
                     <option value="RB">RB</option>
                     <option value="WR">WR</option>
                     <option value="TE">TE</option>
+                    <option value="K">K</option>
+                    <option value="DEFENSE">DEF</option>
                 </select>
             </div>
         ),

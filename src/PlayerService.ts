@@ -16,24 +16,28 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
     let wr: Player[] = pointsByPosition.get("WR");
     let te: Player[] = pointsByPosition.get("TE");
     let k: Player[] = pointsByPosition.get("K");
+    // let def: Player[] = pointsByPosition.get("DEF");
 
     let qbPoint: number[] = qb.slice(0, 32).map((p: Player) => p.points);
     let rbPoint: number[] = rb.slice(0, 64).map((p: Player) => p.points);
     let wrPoint: number[] = wr.slice(0, 64).map((p: Player) => p.points);
     let tePoint: number[] = te.slice(0, 32).map((p: Player) => p.points);
     let kPoint: number[] = k.slice(0, 32).map((p: Player) => p.points);
+    // let defPoint: number[] = def.slice(0, 32).map((p: Player) => p.points);
 
     let qbCkValue = draftConfig.roster.starting.qb * draftConfig.teamCount;
     let rbCkValue = Math.round(draftConfig.roster.starting.rb * draftConfig.teamCount);
     let wrCkValue = Math.round(draftConfig.roster.starting.wr * draftConfig.teamCount);
     let teCkValue = draftConfig.roster.starting.te * draftConfig.teamCount;
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
+    // let defCkValue = draftConfig.roster.starting.def * draftConfig.teamCount;
 
     let qbTiers: number[][] = ckmeans(qbPoint, draftConfig.compute.tiers.qb);
     let rbTiers: number[][] = ckmeans(rbPoint, draftConfig.compute.tiers.rb);
     let wrTiers: number[][] = ckmeans(wrPoint, draftConfig.compute.tiers.wr);
     let teTiers: number[][] = ckmeans(tePoint, draftConfig.compute.tiers.te);
     let kTiers: number[][] = ckmeans(kPoint, draftConfig.compute.tiers.k);
+    // let defTiers: number[][] = ckmeans(defPoint, draftConfig.compute.tiers.def);
 
     // update players tiers
     updateTierAndRv(qb, qbTiers, qbCkValue);
@@ -41,6 +45,7 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
     updateTierAndRv(wr, wrTiers, wrCkValue);
     updateTierAndRv(te, teTiers, teCkValue);
     updateTierAndRv(k, kTiers, kCkValue);
+    // updateTierAndRv(def, defTiers, defCkValue);
 
 }
 
@@ -77,7 +82,7 @@ export function updateRV(players: Player[]) {
     let wrCkValue = draftConfig.roster.starting.wr * draftConfig.teamCount;
     let teCkValue = draftConfig.roster.starting.te * draftConfig.teamCount;
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
-    // let defCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
+    let defCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
 
     let pointsByPosition: any = new Map<string, Player[]>();
     players.forEach(p => {
@@ -102,14 +107,14 @@ export function updateRV(players: Player[]) {
     let wr: Player[] = pointsByPosition.get("WR");
     let te: Player[] = pointsByPosition.get("TE");
     let k: Player[] = pointsByPosition.get("K");
-    // let def: Player[] = pointsByPosition.get("DEF");
+    let def: Player[] = pointsByPosition.get("DEF");
 
     let qbRvValue = getPoints(qb, qbCkValue);
     let rbRvValue = getPoints(rb, rbCkValue);
     let wrRvValue = getPoints(wr, wrCkValue);
     let teRvValue = getPoints(te, teCkValue);
     let kRvValue = getPoints(k, kCkValue);
-    // let defRvValue = def[defCkValue].points;
+    let defRvValue = getPoints(def, defCkValue);
 
     players.forEach((p: Player) => {
 
@@ -131,7 +136,7 @@ export function updateRV(players: Player[]) {
                 rvValue = kRvValue;
                 break;
             case "def":
-                // rvValue = defRvValue;
+                rvValue = defRvValue;
                 break;
             default:
                 console.error("Unknown position: " + p.position)

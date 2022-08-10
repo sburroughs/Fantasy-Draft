@@ -4,13 +4,13 @@ import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 import {NflTeam, NflTeams, Player} from "./Player";
 
-function ConfigurationModal(props: { onSubmit: any }) {
+function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleSubmit = (event: any) => {
+    const handle = (event: any) => {
 
         event.preventDefault();
         event.stopPropagation();
@@ -33,7 +33,13 @@ function ConfigurationModal(props: { onSubmit: any }) {
             relativeValue: 0,
             tier: 0
         }
-        props.onSubmit(player);
+
+        if (event.nativeEvent.submitter.name == "add") {
+            props.onAdd(player);
+        }
+        if (event.nativeEvent.submitter.name == "draft") {
+            props.onDraft([player]);
+        }
 
     };
 
@@ -42,16 +48,12 @@ function ConfigurationModal(props: { onSubmit: any }) {
             <Button onClick={handleShow}>
                 Add Player
             </Button>
-
-
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title> Add Player </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
-                    <Form noValidate onSubmit={handleSubmit}>
-
+                    <Form noValidate onSubmit={handle}>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Name</Form.Label>
                             <Form.Control as="input" defaultValue={""}/>
@@ -78,15 +80,15 @@ function ConfigurationModal(props: { onSubmit: any }) {
                         <Button variant="secondary" onClick={handleClose}>
                             Close
                         </Button>
-                        <Button variant="primary" type="submit">
+                        <Button variant="primary" name="add" type="submit">
                             Add
                         </Button>
+                        <Button variant="primary" name="draft" type="submit">
+                            Draft
+                        </Button>
                     </Form>
-
                 </Modal.Body>
-
             </Modal>
-
         </>
     );
 }
