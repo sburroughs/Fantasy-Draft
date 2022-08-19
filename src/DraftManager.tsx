@@ -11,6 +11,7 @@ import ConfigurationModal from "./ConfigurationModal";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayers from "./SuggestedPlayer";
 import draftConfig from './DefaultConfig.json';
+import './Player.css'
 import AddPlayerModal from "./AddPlayerModal";
 import {nextTurnSnake, previousTurnSnake} from "./DraftProgressor";
 
@@ -35,6 +36,39 @@ function DraftPicks(props: { picks: Player[] }) {
     return <div className={"panel-scrollable"}>
         <ol reversed>{listItems}</ol>
     </div>;
+}
+
+function TrendAnalysis(props: { picks: Player[], teamCount: number }) {
+    const picks = [...props.picks];
+    const teamCount = props.teamCount;
+    const headerRow = [...Array(teamCount + 1)].map((_, i) => {
+        return <>
+            <div>
+                {i != 0 && <div>{i}</div>}
+            </div>
+        </>
+    });
+
+    const trend = () => <></>
+
+    const listItems = picks.map((p, index) => {
+            let round = Math.trunc(index / teamCount) + 1;
+            if (index % teamCount == 0) {
+                return <><span>{round}</span><span className={"grid-item position-" + p.position.toLowerCase()}>{p.position}</span></>
+            }
+            return <span className={"grid-item position-" + p.position.toLowerCase()}>{p.position}</span>
+        }
+    );
+
+    return <>
+        <div>Trend: {trend}</div>
+        <div className={"grid-wrapper"}>
+            {headerRow}
+            {listItems}
+        </div>
+    </>
+
+
 }
 
 export class DraftManager extends React.Component<IProps, IState> {
@@ -108,9 +142,6 @@ export class DraftManager extends React.Component<IProps, IState> {
             this.setState({
                 availablePlayers: updated
             });
-
-            console.log("YEAHBUD");
-
 
         }
 
@@ -261,6 +292,12 @@ export class DraftManager extends React.Component<IProps, IState> {
                                 <Accordion.Header>Picks</Accordion.Header>
                                 <Accordion.Body>
                                     <DraftPicks picks={draftPicks}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                            <Accordion.Item eventKey="2">
+                                <Accordion.Header>Trends</Accordion.Header>
+                                <Accordion.Body>
+                                    <TrendAnalysis picks={draftPicks} teamCount={config.teamCount}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>

@@ -16,6 +16,12 @@ h2.panel {
     max-height: 300px;
 }
 
+.grid-wrapper {
+    display: grid;
+    grid-template-rows:    repeat(20, 25px);
+    grid-template-columns: repeat(13, 1fr)
+}
+
 /*relative value*/
 .rv-1 .rv-filled {
     background-color: rgba(0, 128, 0, 0.6);
@@ -65,26 +71,26 @@ h2.panel {
 }
 
 /*position*/
-.position-qb .position-filled {
+.position-qb, .position-qb .position-filled {
     background-color: orange;
 }
 
-.position-rb .position-filled {
+.position-rb, .position-rb .position-filled {
     background-color: lightblue;
 }
 
-.position-wr .position-filled {
+.position-wr, .position-wr .position-filled {
     background-color: cornflowerblue;
 }
 
-.position-te .position-filled {
+.position-te, .position-te .position-filled {
     background-color: mediumpurple;
 }
 
-.position-k .position-filled {
+.position-k, .position-k .position-filled {
     background-color: hotpink;
 }
 
-.position-def .position-filled {
+.position-def, .position-def .position-filled {
     background-color: khaki;
 }

@@ -6,6 +6,7 @@ export interface Player {
     team: string
     points: number
     relativeValue: number
+    age: number
     tier: number
 }
 

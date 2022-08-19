@@ -75,6 +75,7 @@ export const PlayerUpload = (props: {onChangeValue: any}) => {
                 team: team,
                 points: roundedPoints,
                 relativeValue: 0,
+                age: 0,
                 tier: 1
             };
         }

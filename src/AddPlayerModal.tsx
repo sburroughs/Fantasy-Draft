@@ -28,6 +28,7 @@ function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
             name: name,
             adp: adp,
             points: points,
+            age: 0,
             team: team,
             position: position,
             relativeValue: 0,
