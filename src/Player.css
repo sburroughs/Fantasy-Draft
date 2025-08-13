@@ -24,28 +24,44 @@ h2.panel {
 
 /*relative value*/
 .rv-1 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.6);
+    background-color: rgba(0, 128, 0, 0.9);
 }
 
 .rv-2 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.4);
+    background-color: rgba(0, 128, 0, 0.7);
 }
 
 .rv-3 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.2);
+    background-color: rgba(0, 128, 0, 0.5);
 }
 
 .rv-4 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.1);
+    background-color: rgba(0, 128, 0, 0.3);
 }
 
 .rv-5 .rv-filled {
+    background-color: rgba(0, 128, 0, 0.15);
+}
+
+.rv-6 .rv-filled {
+    background-color: rgba(0, 128, 0, 0.05);
+}
+
+.rv-7 .rv-filled {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.rv-8 .rv-filled {
+    background-color: rgba(255, 0, 0, 0.3);
+}
+
+.rv-9 .rv-filled {
     background-color: rgba(255, 0, 0, 0.5);
     color: white;
 }
 
-.rv-6 .rv-filled {
-    background-color: rgba(255, 0, 0, 0.7);
+.rv-0 .rv-filled {
+    background-color: rgba(255, 0, 0, 0.8);
     color: white;
 }
 

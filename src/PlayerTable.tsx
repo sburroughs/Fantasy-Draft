@@ -136,23 +136,18 @@ const columns: readonly Column<Player>[] = [
 const RowRenderer = (props: RowRendererProps<Player>) => {
 
     const getRowBackgroundClass = () => {
-
         let v = props.row.relativeValue;
-        let color;
-        if (v > 100)
-            color = '1'
-        else if (v > 60)
-            color = '2'
-        else if (v > 20)
-            color = '3'
-        else if (v > 0)
-            color = '4'
-        else if (v > -20)
-            color = '5'
-        else
-            color = '6'
-
-        return "rv-" + color;
+        let thresholds: any = config.display["player-board"]["gradient-thresholds"]["rv"];
+        let tier = '0'; // defaults to 0 if no matches
+        for (let i = 1; i < 10; i++) {
+            let key = i.toString();
+            let value = thresholds[key];
+            if (v > value) {
+                tier = key
+                break
+            }
+        }
+        return "rv-" + tier;
     };
 
     function getRowTierColor() {
