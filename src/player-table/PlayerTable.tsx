@@ -18,7 +18,14 @@ import {Player} from '../Player';
 import {createPortal} from "react-dom";
 import {Cells} from "./Cells";
 
-const columns: readonly Column<Player>[] = config.display["player-board"]["show-column"].map(fieldName => Cells.get(fieldName));
+const columns: readonly Column<Player>[] = config.display["player-board"]["show-column"]
+    .filter((fieldName: string) => {
+        if(!Cells.has(fieldName)) {
+            console.warn(`Field "${fieldName}" is not defined in Cells. Please check your configuration.`);
+        }
+        return Cells.has(fieldName);
+    })
+    .map(fieldName => Cells.get(fieldName));
 
 const RowRenderer = (props: RowRendererProps<Player>) => {
 
