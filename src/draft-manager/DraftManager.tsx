@@ -16,6 +16,7 @@ import AddPlayerModal from "../config/AddPlayerModal";
 import {nextTurnSnake, previousTurnSnake} from "./DraftProgressor";
 import SelectedPicks from "../draft-insight/SelectedPicks";
 import TrendInsight from "../draft-insight/TrendInsight";
+import ConfirmationModal from "../config/ConfirmationModal";
 
 interface Props {
     defaultTeamCount: number
@@ -176,7 +177,6 @@ export class DraftManager extends React.Component<Props, State> {
 
                 }
 
-                // updateRV(updatedAvailablePlayers);
             }
 
             let updated = {
@@ -203,17 +203,15 @@ export class DraftManager extends React.Component<Props, State> {
 
                         <ConfigurationModal defaultConfig={draftConfig}/>
 
-
-                        <Button onClick={() => undoDraftPicks(1000)}>
-                            Restart Draft
-                        </Button>
+                        <ConfirmationModal buttonText={"Restart Draft"}
+                                           onConfirm={() => undoDraftPicks(1000)}></ConfirmationModal>
 
                         <Button onClick={() => undoDraftPicks(1)}>
                             Undo Pick
                         </Button>
 
-
                         <AddPlayerModal onAdd={addPlayer} onDraft={draftPlayers}></AddPlayerModal>
+
 
                     </Col>
                     <Col lg={8} md={12}>
