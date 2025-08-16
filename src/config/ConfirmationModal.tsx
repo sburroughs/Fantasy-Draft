@@ -17,14 +17,10 @@ function ConfirmationModal(props: { buttonText: string, onConfirm: any }) {
         event.preventDefault();
         event.stopPropagation();
 
-
         try {
-
             props.onConfirm()
-
             setValid(true);
             handleClose();
-
         } catch (e) {
             setValid(false);
         }
@@ -40,7 +36,6 @@ function ConfirmationModal(props: { buttonText: string, onConfirm: any }) {
                     <Modal.Title>Are you Sure?</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
                     <Form noValidate validated={valid} onSubmit={handleSubmit}>
                         <Button variant="primary" type="submit">
                             Confirm
@@ -49,11 +44,8 @@ function ConfirmationModal(props: { buttonText: string, onConfirm: any }) {
                             Cancel
                         </Button>
                     </Form>
-
                 </Modal.Body>
-
             </Modal>
-
         </>
     );
 }

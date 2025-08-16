@@ -7,7 +7,6 @@ import {PlayerUpload} from "../config/PlayerUpload";
 import DraftedTeams from "../draft-insight/DraftedTeams";
 import DraftStatus from "../draft-insight/DraftStatus";
 import Utility from "../common/Utility";
-import ConfigurationModal from "../config/ConfigurationModal";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayersInsight from "../draft-insight/SuggestedPlayerInsight";
 import draftConfig from '../config/DefaultConfig.json';
@@ -36,13 +35,6 @@ export class DraftManager extends React.Component<Props, State> {
     constructor(props: any) {
         super(props);
 
-        const getConfig = (): any => {
-            return localStorage.getItem("config") ?
-                JSON.parse(localStorage.getItem("config") || "{}") :
-                draftConfig;
-        };
-        const config = getConfig();
-
         const draftState = (): any => {
             return localStorage.getItem("draft") ?
                 JSON.parse(localStorage.getItem("draft") || "{}") :
@@ -55,7 +47,7 @@ export class DraftManager extends React.Component<Props, State> {
         };
 
         const populateTeams = (): Team[] => {
-            const count = config.teamCount;
+            const count = draftConfig.teamCount;
             return Array.from({length: count}, () => ({
                 players: []
             }));
@@ -83,13 +75,6 @@ export class DraftManager extends React.Component<Props, State> {
     render() {
 
         let {availablePlayers, draftPicks, teams, draftStatus} = this.state;
-
-        const getConfig = (): any => {
-            return localStorage.getItem("config") ?
-                JSON.parse(localStorage.getItem("config") || "{}") :
-                draftConfig;
-        };
-        const config = getConfig();
 
         const addPlayer = (player: Player) => {
             let updated: Player[] = availablePlayers;
@@ -201,8 +186,6 @@ export class DraftManager extends React.Component<Props, State> {
                             <PlayerUpload onChangeValue={setAvailablePlayers}/>
                         </Button>
 
-                        <ConfigurationModal defaultConfig={draftConfig}/>
-
                         <ConfirmationModal buttonText={"Restart Draft"}
                                            onConfirm={() => undoDraftPicks(1000)}></ConfirmationModal>
 
@@ -227,7 +210,7 @@ export class DraftManager extends React.Component<Props, State> {
                                 <Accordion.Body>
                                     <SuggestedPlayersInsight players={availablePlayers}
                                                              currentTeam={teams[draftStatus.currentTeam - 1]}
-                                                             displayCount={config.display.suggestions.show}
+                                                             displayCount={draftConfig.display.suggestions.show}
                                                              onSubmit={draftPlayers}/>
                                 </Accordion.Body>
                             </Accordion.Item>
@@ -252,7 +235,7 @@ export class DraftManager extends React.Component<Props, State> {
                             <Accordion.Item eventKey="2">
                                 <Accordion.Header>Trends</Accordion.Header>
                                 <Accordion.Body>
-                                    <TrendInsight picks={draftPicks} teamCount={config.teamCount}/>
+                                    <TrendInsight picks={draftPicks} teamCount={draftConfig.teamCount}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>
