@@ -1,5 +1,5 @@
 import React from "react";
-import PlayerTable from "./PlayerTable";
+import PlayerTable from "./player-table/PlayerTable";
 import {Player, Team, IDraftStatus} from "./Player";
 import {Col, Container, Row} from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion"

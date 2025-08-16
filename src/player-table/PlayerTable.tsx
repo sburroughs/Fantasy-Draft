@@ -11,127 +11,14 @@ import DataGrid, {
 } from 'react-data-grid';
 import 'react-data-grid/dist/react-data-grid.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './react-contextmenu.css';
-import './Player.css';
-import config from './DefaultConfig.json';
-import {NflTeam, NflTeams, Player} from './Player';
+import '../react-contextmenu.css';
+import '../Player.css';
+import config from '../DefaultConfig.json';
+import {Player} from '../Player';
 import {createPortal} from "react-dom";
+import {Cells} from "./Cells";
 
-const columns: readonly Column<Player>[] = [
-    ...!config.display["player-board"]["hide-column"].includes("adp") ? [
-        {
-            key: 'adp',
-            name: 'ADP',
-            width: 30,
-            frozen: true,
-            sortable: true,
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("tier") ? [
-        {
-            key: 'tier',
-            name: 'Tier',
-            width: 30,
-            frozen: true,
-            sortable: true,
-            cellClass: () => {
-                return "tier-filled"
-            }
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("name") ? [
-        {
-            key: 'name',
-            name: 'Name',
-            frozen: true,
-            sortable: true,
-            filterRenderer: (p: any) => (
-                <div className="rdg-filter-container">
-                    <input
-                        className="rdg-filter input-sm"
-                        value={p.value}
-                        onChange={e => p.onChange(e.target.value)}
-                    />
-                </div>
-            ),
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("points") ? [
-        {
-            key: 'points',
-            name: 'Points',
-            width: 30,
-            frozen: true,
-            sortable: true
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("relativeValue") ? [
-        {
-            key: 'relativeValue',
-            name: 'RV',
-            width: 30,
-            frozen: true,
-            sortable: true,
-            cellClass: () => {
-                return "rv-filled"
-            }
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("age") ? [
-        {
-            key: 'age',
-            name: 'Age',
-            width: 30,
-            frozen: true,
-            sortable: true
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("position") ? [
-        {
-            key: 'position',
-            name: 'Position',
-            width: 30,
-            frozen: true,
-            sortable: false,
-            filterRenderer: (p: any) => (
-                <div className="rdg-filter-container">
-                    <select className="rdg-filter" value={p.value} onChange={e => p.onChange(e.target.value)}>
-                        <option value="All">All</option>
-                        <option value="QB">QB</option>
-                        <option value="RB">RB</option>
-                        <option value="WR">WR</option>
-                        <option value="TE">TE</option>
-                        <option value="K">K</option>
-                        <option value="DEFENSE">DEF</option>
-                    </select>
-                </div>
-            ),
-            cellClass: () => {
-                return "position-filled"
-            }
-        }
-    ] : [],
-    ...!config.display["player-board"]["hide-column"].includes("team") ? [
-        {
-            key: 'team',
-            name: 'Team',
-            width: 60,
-            frozen: true,
-            sortable: false,
-            filterRenderer: (p: any) => (
-                <div className="rdg-filter-container">
-                    <select className="rdg-filter" value={p.value} onChange={e => p.onChange(e.target.value)}>
-                        <option value="All">All</option>
-                        {NflTeams.map((team: NflTeam) =>
-                            <option key={team.code} value={team.code}>{team.code}</option>
-                        )}
-                    </select>
-                </div>
-            )
-        }
-    ] : []
-
-];
+const columns: readonly Column<Player>[] = config.display["player-board"]["show-column"].map(fieldName => Cells.get(fieldName));
 
 const RowRenderer = (props: RowRendererProps<Player>) => {
 

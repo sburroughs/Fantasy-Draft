@@ -36,9 +36,14 @@
       "show": 5
     },
     "player-board": {
-      "hide-column": [
-        "this-array-can-not-be-empty",
-        "age"
+      "show-column": [
+        "adp",
+        "tier",
+        "name",
+        "points",
+        "rv",
+        "position",
+        "team"
       ],
       "gradient-thresholds": {
         "rv": {
