@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Tab, Tabs} from 'react-bootstrap';
-import {Player, Team} from "../Player";
-import {TopPlayerList} from "../TopPlayerList";
+import {Player, Team} from "../common/Player";
+import {TopPlayerList} from "./TopPlayerList";
 
 const SuggestedPlayersInsight = (props: { players: Player[], displayCount: number, onSubmit: any, currentTeam: Team }) => {
     const [key, setKey] = useState("best")

@@ -1,4 +1,4 @@
-import {IDraftStatus} from "./Player";
+import {IDraftStatus} from "../common/Player";
 
 export const nextTurnSnake = (draftStatus: IDraftStatus, teams: any) => {
 

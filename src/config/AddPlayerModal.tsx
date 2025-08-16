@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Modal from "react-bootstrap/Modal"
 import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
-import {NflTeam, NflTeams, Player} from "./Player";
+import {NflTeam, NflTeams, Player} from "../common/Player";
 
 function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
     const [show, setShow] = useState(false);

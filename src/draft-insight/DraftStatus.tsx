@@ -1,5 +1,5 @@
 import React from "react";
-import {IDraftStatus} from "./Player";
+import {IDraftStatus} from "../common/Player";
 
 class DraftStatus extends React.Component<{ status: IDraftStatus, playerTeam: number }, {}> {
 

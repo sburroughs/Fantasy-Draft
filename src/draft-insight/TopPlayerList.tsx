@@ -1,6 +1,6 @@
 import React from "react";
-import {Player} from "./Player";
-import './App.css';
+import {Player} from "../common/Player";
+import '../App.css';
 import {Button} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 

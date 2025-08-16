@@ -1,6 +1,6 @@
 import React from "react";
 import {Tab, Tabs} from 'react-bootstrap'
-import {Player, Team} from "./Player";
+import {Player, Team} from "../common/Player";
 import ListGroup from "react-bootstrap/ListGroup";
 
 const TeamSummary = (props: { players: Player[], config: any }) => {

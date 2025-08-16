@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import Utility from "./Utility";
-import {NflTeam, NflTeams, Player} from "./Player";
+import Utility from "./common/Utility";
+import {NflTeam, NflTeams, Player} from "./common/Player";
 
 interface Props {
     availablePlayers: Player[]

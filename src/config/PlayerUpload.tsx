@@ -1,8 +1,8 @@
 import React, {useCallback} from "react";
 import {useDropzone} from "react-dropzone";
 import Papa, {ParseResult} from 'papaparse';
-import {Player} from "./Player";
-import {updatePlayersRVandTier} from "./PlayerService"
+import {Player} from "../common/Player";
+import {updatePlayersRVandTier} from "../common/PlayerService"
 
 export const PlayerUpload = (props: {onChangeValue: any}) => {
 

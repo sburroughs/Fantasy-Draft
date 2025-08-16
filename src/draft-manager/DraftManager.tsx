@@ -1,20 +1,20 @@
 import React from "react";
 import PlayerTable from "../player-table/PlayerTable";
-import {IDraftStatus, Player, Team} from "../Player";
+import {IDraftStatus, Player, Team} from "../common/Player";
 import {Col, Container, Row} from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion"
-import {PlayerUpload} from "../PlayerUpload";
-import DraftedTeams from "../DraftedTeams";
-import DraftStatus from "../DraftStatus";
-import Utility from "../Utility";
+import {PlayerUpload} from "../config/PlayerUpload";
+import DraftedTeams from "../draft-insight/DraftedTeams";
+import DraftStatus from "../draft-insight/DraftStatus";
+import Utility from "../common/Utility";
 import ConfigurationModal from "../config/ConfigurationModal";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayersInsight from "../draft-insight/SuggestedPlayerInsight";
 import draftConfig from '../config/DefaultConfig.json';
 import '../Player.css'
-import AddPlayerModal from "../AddPlayerModal";
-import {nextTurnSnake, previousTurnSnake} from "../DraftProgressor";
-import DraftPicks from "../draft-insight/PickInsight";
+import AddPlayerModal from "../config/AddPlayerModal";
+import {nextTurnSnake, previousTurnSnake} from "./DraftProgressor";
+import SelectedPicks from "../draft-insight/SelectedPicks";
 import TrendInsight from "../draft-insight/TrendInsight";
 
 interface Props {
@@ -248,7 +248,7 @@ export class DraftManager extends React.Component<Props, State> {
                             <Accordion.Item eventKey="1">
                                 <Accordion.Header>Picks</Accordion.Header>
                                 <Accordion.Body>
-                                    <DraftPicks picks={draftPicks}/>
+                                    <SelectedPicks picks={draftPicks}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                             <Accordion.Item eventKey="2">

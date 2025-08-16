@@ -1,4 +1,4 @@
-import {Player} from "../Player";
+import {Player} from "../common/Player";
 import React from "react";
 
 function TrendInsight(props: { picks: Player[], teamCount: number }) {

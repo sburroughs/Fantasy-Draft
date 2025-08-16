@@ -1,4 +1,4 @@
-import {NflTeam, NflTeams} from "../Player";
+import {NflTeam, NflTeams} from "../common/Player";
 import React from "react";
 
 export const Cells: any = new Map<string, any>([

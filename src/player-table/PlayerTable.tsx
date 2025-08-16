@@ -14,7 +14,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../react-contextmenu.css';
 import '../Player.css';
 import config from '../config/DefaultConfig.json';
-import {Player} from '../Player';
+import {Player} from '../common/Player';
 import {createPortal} from "react-dom";
 import {Cells} from "./Cells";
 
