@@ -6,3 +6,4 @@ To Do
 - Projected Next Pick
 - Configurable upload fields
 - Configurable compute fields
+- Slipping Players Highlight
