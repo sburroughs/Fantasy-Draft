@@ -1,6 +1,6 @@
 import {Player} from "./Player";
 import {ckmeans} from "simple-statistics";
-import draftConfig from "./DefaultConfig.json"
+import draftConfig from "./config/DefaultConfig.json"
 
 export function updatePlayersRVandTier(basePlayers: Player[]) {
 

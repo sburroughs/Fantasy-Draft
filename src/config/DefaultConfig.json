@@ -31,12 +31,14 @@
       "def": 10
     }
   },
+
   "display": {
     "suggestions": {
       "show": 5
     },
     "player-board": {
       "show-column": [
+        "draft-player",
         "adp",
         "tier",
         "name",

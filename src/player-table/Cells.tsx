@@ -114,6 +114,15 @@ export const Cells: any = new Map<string, any>([
             )
         }
     ],
+    ["draft-player",
+        {
+            key: 'draft-player',
+            name: 'Draft',
+            width: 60,
+            frozen: true,
+            sortable: false
+        }
+    ],
 ]);
 
 

@@ -2,13 +2,13 @@ import React, {useState} from "react";
 import Utility from "./Utility";
 import {NflTeam, NflTeams, Player} from "./Player";
 
-interface IProps {
+interface Props {
     availablePlayers: Player[]
     draftedPlayers: Player[]
     onSubmit: any
 }
 
-const DraftByText = (props: IProps) => {
+const DraftByText = (props: Props) => {
 
     const [draftByTextValue, setDraftByTextValue] = useState("[]");
     const [lastImportedIndex, setLastImportedIndex] = useState(0);

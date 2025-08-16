@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import {DraftManager} from "./DraftManager";
+import {DraftManager} from "./draft-manager/DraftManager";
 
 
 function App() {

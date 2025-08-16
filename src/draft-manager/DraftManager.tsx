@@ -1,79 +1,36 @@
 import React from "react";
-import PlayerTable from "./player-table/PlayerTable";
-import {Player, Team, IDraftStatus} from "./Player";
+import PlayerTable from "../player-table/PlayerTable";
+import {IDraftStatus, Player, Team} from "../Player";
 import {Col, Container, Row} from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion"
-import {PlayerUpload} from "./PlayerUpload";
-import DraftedTeams from "./DraftedTeams";
-import DraftStatus from "./DraftStatus";
-import Utility from "./Utility";
-import ConfigurationModal from "./ConfigurationModal";
+import {PlayerUpload} from "../PlayerUpload";
+import DraftedTeams from "../DraftedTeams";
+import DraftStatus from "../DraftStatus";
+import Utility from "../Utility";
+import ConfigurationModal from "../config/ConfigurationModal";
 import Button from "react-bootstrap/Button";
-import SuggestedPlayers from "./SuggestedPlayer";
-import draftConfig from './DefaultConfig.json';
-import './Player.css'
-import AddPlayerModal from "./AddPlayerModal";
-import {nextTurnSnake, previousTurnSnake} from "./DraftProgressor";
+import SuggestedPlayersInsight from "../draft-insight/SuggestedPlayerInsight";
+import draftConfig from '../config/DefaultConfig.json';
+import '../Player.css'
+import AddPlayerModal from "../AddPlayerModal";
+import {nextTurnSnake, previousTurnSnake} from "../DraftProgressor";
+import DraftPicks from "../draft-insight/PickInsight";
+import TrendInsight from "../draft-insight/TrendInsight";
 
-
-interface IProps {
+interface Props {
     defaultTeamCount: number
 }
 
-interface IState {
+interface State {
     availablePlayers: Player[];
     draftPicks: Player[];
     teams: Team[];
     draftStatus: IDraftStatus;
 }
 
-function DraftPicks(props: { picks: Player[] }) {
-    const picks = [...props.picks];
-    const listItems = picks.reverse().map((p) =>
-        <li key={p.id}>{p.name}</li>
-    );
+export class DraftManager extends React.Component<Props, State> {
 
-    return <div className={"panel-scrollable"}>
-        <ol reversed>{listItems}</ol>
-    </div>;
-}
-
-function TrendAnalysis(props: { picks: Player[], teamCount: number }) {
-    const picks = [...props.picks];
-    const teamCount = props.teamCount;
-    const headerRow = [...Array(teamCount + 1)].map((_, i) => {
-        return <>
-            <div>
-                {i != 0 && <div>{i}</div>}
-            </div>
-        </>
-    });
-
-    const trend = () => <></>
-
-    const listItems = picks.map((p, index) => {
-            let round = Math.trunc(index / teamCount) + 1;
-            if (index % teamCount == 0) {
-                return <><span>{round}</span><span className={"grid-item position-" + p.position.toLowerCase()}>{p.position}</span></>
-            }
-            return <span className={"grid-item position-" + p.position.toLowerCase()}>{p.position}</span>
-        }
-    );
-
-    return <>
-        <div>Trend: {trend}</div>
-        <div className={"grid-wrapper"}>
-            {headerRow}
-            {listItems}
-        </div>
-    </>
-
-
-}
-
-export class DraftManager extends React.Component<IProps, IState> {
-
-    state: IState;
+    state: State;
 
     constructor(props: any) {
         super(props);
@@ -270,10 +227,10 @@ export class DraftManager extends React.Component<IProps, IState> {
                             <Accordion.Item eventKey="0">
                                 <Accordion.Header>Suggestions</Accordion.Header>
                                 <Accordion.Body>
-                                    <SuggestedPlayers players={availablePlayers}
-                                                      currentTeam={teams[draftStatus.currentTeam - 1]}
-                                                      displayCount={config.display.suggestions.show}
-                                                      onSubmit={draftPlayers}/>
+                                    <SuggestedPlayersInsight players={availablePlayers}
+                                                             currentTeam={teams[draftStatus.currentTeam - 1]}
+                                                             displayCount={config.display.suggestions.show}
+                                                             onSubmit={draftPlayers}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>
@@ -297,7 +254,7 @@ export class DraftManager extends React.Component<IProps, IState> {
                             <Accordion.Item eventKey="2">
                                 <Accordion.Header>Trends</Accordion.Header>
                                 <Accordion.Body>
-                                    <TrendAnalysis picks={draftPicks} teamCount={config.teamCount}/>
+                                    <TrendInsight picks={draftPicks} teamCount={config.teamCount}/>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Accordion>

@@ -13,7 +13,7 @@ import 'react-data-grid/dist/react-data-grid.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../react-contextmenu.css';
 import '../Player.css';
-import config from '../DefaultConfig.json';
+import config from '../config/DefaultConfig.json';
 import {Player} from '../Player';
 import {createPortal} from "react-dom";
 import {Cells} from "./Cells";
@@ -66,13 +66,13 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
 }
 
 
-interface IProp {
+interface Prop {
     availablePlayers: Player[]
     onDraftPlayer: any
     onUpdatedAvailablePlayers: any
 }
 
-function PlayerTable(props: IProp) {
+function PlayerTable(props: Prop) {
 
     const [[sortColumn, sortDirection], setSort] = useState<[string, SortDirection]>(['adp', 'ASC']);
     const [selectedRows, setSelectedRows] = useState(() => new Set<number>()); //TODO: remove with selectedrow once working
