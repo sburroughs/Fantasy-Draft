@@ -44,21 +44,48 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
         return "rv-" + tier;
     };
 
-    function getRowTierColor() {
-        return "tier-" + props.row.tier;
+    const tierStyle = "tier-" + props.row.tier;
+
+    const positionStyles = "position-" + props.row.position.toLowerCase();
+
+    function getPicksSnake(totalTeams:any, draftPosition:any, totalRounds:any) {
+        const myPicks = [];
+
+        for (let round = 1; round <= totalRounds; round++) {
+            let overallPick;
+
+            if (round % 2 === 1) {
+                // Odd rounds: order goes 1 → totalTeams
+                overallPick = (round - 1) * totalTeams + draftPosition;
+            } else {
+                // Even rounds: order goes totalTeams → 1
+                overallPick = (round - 1) * totalTeams + (totalTeams - draftPosition + 1);
+            }
+
+            myPicks.push(overallPick);
+        }
+
+        return myPicks;
+    }
+    const picksInDraft = new Set(getPicksSnake(config.teamCount, config.draftPosition, config.draftRounds));
+    const projectedPickStyles = () => {
+        if(picksInDraft.has(props.row.adp)) {
+            return "projected-pick";
+        }
+        return ""
     }
 
-    function getPositionColor() {
-        return "position-" + props.row.position.toLowerCase();
-    }
+    const gridStyles = () => [
+        getRowBackgroundClass(),
+        tierStyle,
+        positionStyles,
+        projectedPickStyles(),
 
-    const getPrioritizedColumnStyles = () => getRowBackgroundClass() + " "
-        + getRowTierColor() + " "
-        + getPositionColor()
+    ].join(" ")
 
     return (
         <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
-            <div className={getPrioritizedColumnStyles()}>
+            <div className={gridStyles()}>
                 <DataGridRow {...props} />
             </div>
         </ContextMenuTrigger>

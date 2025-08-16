@@ -22,29 +22,36 @@ h2.panel {
     grid-template-columns: repeat(13, 1fr)
 }
 
+/*draft*/
+.projected-pick {
+    border-bottom-color: gold;
+    border-bottom-style: solid;
+    border-bottom-width: medium;
+}
+
 /*relative value*/
 .rv-1 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.9);
+    background-color: rgba(0, 128, 0, 1);
 }
 
 .rv-2 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.7);
+    background-color: rgba(0, 128, 0, 0.8);
 }
 
 .rv-3 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.5);
+    background-color: rgba(0, 128, 0, 0.6);
 }
 
 .rv-4 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.3);
+    background-color: rgba(0, 128, 0, 0.4);
 }
 
 .rv-5 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.15);
+    background-color: rgba(0, 128, 0, 0.2);
 }
 
 .rv-6 .rv-filled {
-    background-color: rgba(0, 128, 0, 0.05);
+    background-color: rgba(0, 128, 0, 0.1);
 }
 
 .rv-7 .rv-filled {

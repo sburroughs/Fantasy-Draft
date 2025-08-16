@@ -120,7 +120,10 @@ export const Cells: any = new Map<string, any>([
             name: 'Draft',
             width: 60,
             frozen: true,
-            sortable: false
+            sortable: false,
+            cellClass: () => {
+                return "draft-cell"
+            }
         }
     ],
 ]);

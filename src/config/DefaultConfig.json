@@ -1,8 +1,9 @@
 {
   "teamCount": 12,
-  "draftPosition": 9,
+  "draftPosition": 2,
+  "draftRounds": 15,
   "roster": {
-    "size": 27,
+    "size": 15,
     "starting": {
       "qb": 2,
       "rb": 2.6,
@@ -31,7 +32,6 @@
       "def": 10
     }
   },
-
   "display": {
     "suggestions": {
       "show": 5
