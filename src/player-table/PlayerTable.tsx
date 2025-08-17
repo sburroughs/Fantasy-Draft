@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {AutoSizer} from 'react-virtualized';
-import {ContextMenu, ContextMenuTrigger, MenuItem, SubMenu} from 'react-contextmenu';
+import {ContextMenu, ContextMenuTrigger, MenuItem} from 'react-contextmenu';
 import DataGrid, {
     Column,
     Filters,
