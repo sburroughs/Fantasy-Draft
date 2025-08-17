@@ -1,11 +1,10 @@
 import React from "react";
 import PlayerTable from "../player-table/PlayerTable";
-import {IDraftStatus, Player, Team} from "../common/Player";
+import {CurrentDraftStatus, Player, Team} from "../common/Player";
 import {Col, Container, Row} from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion"
 import {PlayerUpload} from "../config/PlayerUpload";
 import DraftedTeams from "../draft-insight/DraftedTeams";
-import DraftStatus from "../draft-insight/DraftStatus";
 import Utility from "../common/Utility";
 import Button from "react-bootstrap/Button";
 import SuggestedPlayersInsight from "../draft-insight/SuggestedPlayerInsight";
@@ -16,6 +15,7 @@ import {nextTurnSnake, previousTurnSnake} from "./DraftProgressor";
 import SelectedPicks from "../draft-insight/SelectedPicks";
 import TrendInsight from "../draft-insight/TrendInsight";
 import ConfirmationModal from "../config/ConfirmationModal";
+import DraftStatusInsight from "../draft-insight/DraftStatus";
 
 interface Props {
     defaultTeamCount: number
@@ -25,7 +25,8 @@ interface State {
     availablePlayers: Player[];
     draftPicks: Player[];
     teams: Team[];
-    draftStatus: IDraftStatus;
+    draftStatus: CurrentDraftStatus;
+    lastSelectedPlayer?: Player;
 }
 
 export class DraftManager extends React.Component<Props, State> {
@@ -53,7 +54,7 @@ export class DraftManager extends React.Component<Props, State> {
             }));
         };
 
-        const defaultDraftStatus = (): IDraftStatus => {
+        const defaultDraftStatus = (): CurrentDraftStatus => {
             return {
                 currentTeam: 1,
                 currentRound: 1,
@@ -74,7 +75,7 @@ export class DraftManager extends React.Component<Props, State> {
 
     render() {
 
-        let {availablePlayers, draftPicks, teams, draftStatus} = this.state;
+        let {availablePlayers, draftPicks, teams, draftStatus, lastSelectedPlayer} = this.state;
 
         const addPlayer = (player: Player) => {
             let updated: Player[] = availablePlayers;
@@ -100,7 +101,7 @@ export class DraftManager extends React.Component<Props, State> {
             let updatedDraftPicks = draftPicks;
             let updatedDraftStatus = draftStatus;
             let updatedTeams: Team[] = teams;
-
+            let updatedLastSelectedPlayer = lastSelectedPlayer;
             for (let player of players) {
 
                 let availableAfterPick = updatedAvailablePlayers.filter(p => Utility.standardizeName(p.name) !== Utility.standardizeName(player?.name));
@@ -120,6 +121,8 @@ export class DraftManager extends React.Component<Props, State> {
 
                 updatedDraftStatus = nextTurnSnake(updatedDraftStatus, teams);
 
+                updatedLastSelectedPlayer = player;
+
             }
 
             // updateRV(updatedAvailablePlayers);
@@ -127,7 +130,8 @@ export class DraftManager extends React.Component<Props, State> {
                 availablePlayers: updatedAvailablePlayers,
                 draftPicks: updatedDraftPicks,
                 teams: updatedTeams,
-                draftStatus: updatedDraftStatus
+                draftStatus: updatedDraftStatus,
+                lastSelectedPlayer: updatedLastSelectedPlayer
             };
 
             localStorage.setItem('draft', JSON.stringify(updated, undefined, 4));
@@ -198,7 +202,7 @@ export class DraftManager extends React.Component<Props, State> {
 
                     </Col>
                     <Col lg={8} md={12}>
-                        <DraftStatus status={draftStatus} playerTeam={draftConfig.draftPosition}/>
+                        <DraftStatusInsight status={draftStatus} playerTeam={draftConfig.draftPosition} lastSelectedPlayer={lastSelectedPlayer}/>
                     </Col>
                 </Row>
                 <Row>

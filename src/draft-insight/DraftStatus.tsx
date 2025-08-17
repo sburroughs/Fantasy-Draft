@@ -1,7 +1,7 @@
 import React from "react";
-import {IDraftStatus} from "../common/Player";
+import {CurrentDraftStatus, Player} from "../common/Player";
 
-class DraftStatus extends React.Component<{ status: IDraftStatus, playerTeam: number }, {}> {
+class DraftStatusInsight extends React.Component<{ status: CurrentDraftStatus, playerTeam: number, lastSelectedPlayer?: Player}, {}> {
 
     render() {
         return (
@@ -10,6 +10,7 @@ class DraftStatus extends React.Component<{ status: IDraftStatus, playerTeam: nu
                 <span> {this.props.status.currentRound}.{this.props.status.currentRoundPick}</span>
                 <span> (#{this.props.status.currentPick})</span>
                 <span> Team {this.props.status.currentTeam}</span>
+                <span> (Last Pick: {this.props.lastSelectedPlayer?.name})</span>
                 {this.props.status.currentTeam === this.props.playerTeam &&
                 <span> Your Turn</span>}
             </div>
@@ -18,4 +19,4 @@ class DraftStatus extends React.Component<{ status: IDraftStatus, playerTeam: nu
 
 }
 
-export default DraftStatus;
+export default DraftStatusInsight;

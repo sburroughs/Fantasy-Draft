@@ -14,7 +14,7 @@ export interface Team {
     players: Player[]
 }
 
-export interface IDraftStatus {
+export interface CurrentDraftStatus {
     currentTeam: any
     currentRound: any
     currentPick: any

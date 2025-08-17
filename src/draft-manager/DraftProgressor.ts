@@ -1,6 +1,6 @@
-import {IDraftStatus} from "../common/Player";
+import {CurrentDraftStatus} from "../common/Player";
 
-export const nextTurnSnake = (draftStatus: IDraftStatus, teams: any) => {
+export const nextTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) => {
 
     let updatedTeam, updatedRound, updatedRoundPick;
     let updatedPick = draftStatus.currentPick + 1
@@ -31,7 +31,7 @@ export const nextTurnSnake = (draftStatus: IDraftStatus, teams: any) => {
     }
 }
 
-export const previousTurnSnake = (draftStatus: IDraftStatus, teams: any) => {
+export const previousTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) => {
 
     let updatedTeam, updatedRound, updatedRoundPick;
     let updatedPick = draftStatus.currentPick - 1
