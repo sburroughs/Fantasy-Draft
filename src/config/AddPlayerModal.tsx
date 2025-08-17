@@ -35,10 +35,10 @@ function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
             tier: 0
         }
 
-        if (event.nativeEvent.submitter.name == "add") {
+        if (event.nativeEvent.submitter.name === "add") {
             props.onAdd(player);
         }
-        if (event.nativeEvent.submitter.name == "draft") {
+        if (event.nativeEvent.submitter.name === "draft") {
             props.onDraft([player]);
         }
 
