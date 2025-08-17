@@ -81,39 +81,41 @@ h2.panel {
 }
 
 .tier-3 .tier-filled {
-    background-color: rgba(0, 128, 0, 0.8);
-}
-
-.tier-4 .tier-filled {
     background-color: rgba(0, 128, 0, 0.7);
 }
 
-.tier-5 .tier-filled {
+.tier-4 .tier-filled {
     background-color: rgba(0, 128, 0, 0.6);
 }
 
-.tier-6 .tier-filled {
-    background-color: rgba(0, 128, 0, 0.5);
-}
-
-.tier-7 .tier-filled {
+.tier-5 .tier-filled {
     background-color: rgba(0, 128, 0, 0.4);
 }
 
-.tier-8 .tier-filled {
-    background-color: rgba(0, 128, 0, 0.3);
-}
-
-.tier-9 .tier-filled {
+.tier-6 .tier-filled {
     background-color: rgba(0, 128, 0, 0.2);
 }
 
-.tier-10 .tier-filled {
+.tier-7 .tier-filled {
+    background-color: rgba(0, 128, 0, 0.1);
+}
+
+.tier-8 .tier-filled {
     background-color: rgba(255, 0, 0, 0.1);
 }
 
-.tier-11 .tier-filled {
+.tier-9 .tier-filled {
     background-color: rgba(255, 0, 0, 0.3);
+}
+
+.tier-10 .tier-filled {
+    background-color: rgba(255, 0, 0, 0.7);
+    color: white;
+}
+
+.tier-11 .tier-filled {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
 }
 
 /*position*/
