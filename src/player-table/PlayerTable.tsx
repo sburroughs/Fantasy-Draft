@@ -167,11 +167,6 @@ function PlayerTable(props: Prop) {
 
     }
 
-    const onPlayerTarget = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
-        let player: Player = playerSubset[rowIdx];
-        console.log("targeting: " + player.name)
-    }
-
     return (
         <div style={{flex: '1 1 auto', minHeight: '88vh'}}>
             <AutoSizer>
@@ -198,10 +193,6 @@ function PlayerTable(props: Prop) {
             {createPortal(
                 <ContextMenu id="grid-context-menu">
                     <MenuItem onClick={onPlayerDraft}>Draft Player</MenuItem>
-                    <SubMenu title="Target Player">
-                        <MenuItem onClick={onPlayerTarget}>Aggressive</MenuItem>
-                        <MenuItem onClick={onPlayerTarget}>Stretch</MenuItem>
-                    </SubMenu>
                 </ContextMenu>,
                 document.body
             )}
