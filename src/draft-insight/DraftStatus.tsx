@@ -10,7 +10,8 @@ class DraftStatusInsight extends React.Component<{ status: CurrentDraftStatus, p
                 <span> {this.props.status.currentRound}.{this.props.status.currentRoundPick}</span>
                 <span> (#{this.props.status.currentPick})</span>
                 <span> Team {this.props.status.currentTeam}</span>
-                <span> (Last Pick: {this.props.lastSelectedPlayer?.name})</span>
+                {this.props.lastSelectedPlayer?.name &&
+                <span> (Last Pick: {this.props.lastSelectedPlayer?.name})</span>}
                 {this.props.status.currentTeam === this.props.playerTeam &&
                 <span> Your Turn</span>}
             </div>
