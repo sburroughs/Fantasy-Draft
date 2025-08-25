@@ -23,9 +23,8 @@ h2.panel {
 }
 
 /*draft*/
-.projected-pick {
-    border-bottom-color: gold;
-    border-bottom-style: dotted;
+.projected-pick .cell-adp{
+    background-color: mediumpurple;
 }
 
 /*relative value*/

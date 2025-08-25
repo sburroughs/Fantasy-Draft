@@ -80,7 +80,6 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
         tierStyle,
         positionStyles,
         projectedPickStyles(),
-
     ].join(" ")
 
     return (

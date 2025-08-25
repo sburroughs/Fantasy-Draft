@@ -8,7 +8,10 @@ export const Cells: any = new Map<string, any>([
             name: 'ADP',
             width: 30,
             frozen: true,
-            sortable: true
+            sortable: true,
+            cellClass: () => {
+                return "cell-adp"
+            }
         }
     ],
     ["tier",
