@@ -27,7 +27,7 @@ const columns: readonly Column<Player>[] = config.display["player-board"]["show-
     })
     .map(fieldName => Cells.get(fieldName));
 
-const RowRenderer = (props: RowRendererProps<Player>) => {
+const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[]) => {
 
     const getRowBackgroundClass = () => {
         let v = props.row.relativeValue;
@@ -75,11 +75,20 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
         return ""
     }
 
+    const targetedPlayerStyles = () => {
+        // "targeted-pick" if in targetedPlayers
+        if (targetedPlayers.some(player => player.id === props.row.id)) {
+            return "targeted-pick";
+        }
+        return ""
+    }
+
     const gridStyles = () => [
         getRowBackgroundClass(),
         tierStyle,
         positionStyles,
         projectedPickStyles(),
+        targetedPlayerStyles(),
     ].join(" ")
 
     return (
@@ -94,7 +103,9 @@ const RowRenderer = (props: RowRendererProps<Player>) => {
 
 interface Prop {
     availablePlayers: Player[]
+    targetedPlayers: Player[]
     onDraftPlayer: any
+    onPlayerTargeted: any
     onUpdatedAvailablePlayers: any
 }
 
@@ -163,7 +174,11 @@ function PlayerTable(props: Prop) {
             team: 'All',
             name: ''
         });
+    }
 
+    const onPlayerTargeted = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
+        let player: Player = playerSubset[rowIdx];
+        props.onPlayerTargeted([player]);
     }
 
     return (
@@ -185,13 +200,14 @@ function PlayerTable(props: Prop) {
                         enableFilters={true}
                         filters={filters}
                         onFiltersChange={setFilters}
-                        rowRenderer={RowRenderer}
+                        rowRenderer={(rrp) => RowRenderer(rrp, props.targetedPlayers)}
                     />
                 )}
             </AutoSizer>
             {createPortal(
                 <ContextMenu id="grid-context-menu">
                     <MenuItem onClick={onPlayerDraft}>Draft Player</MenuItem>
+                    <MenuItem onClick={onPlayerTargeted}>Target Player</MenuItem>
                 </ContextMenu>,
                 document.body
             )}

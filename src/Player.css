@@ -27,6 +27,10 @@ h2.panel {
     background-color: mediumpurple;
 }
 
+.targeted-pick .cell-adp{
+    background-color: gold;
+}
+
 /*relative value*/
 .rv-1 .rv-filled {
     background-color: rgba(0, 128, 0, 1);

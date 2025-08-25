@@ -23,6 +23,7 @@ interface Props {
 
 interface State {
     availablePlayers: Player[];
+    targetedPlayers: Player[];
     draftPicks: Player[];
     teams: Team[];
     draftStatus: CurrentDraftStatus;
@@ -65,6 +66,7 @@ export class DraftManager extends React.Component<Props, State> {
 
         this.state = {
             availablePlayers: draftState().availablePlayers ? draftState().availablePlayers : [],
+            targetedPlayers: draftState().targetedPlayers ? draftState().targetedPlayers : [],
             draftPicks: draftState().draftPicks ? draftState().draftPicks : [],
             teams: draftState().teams ? draftState().teams : populateTeams(),
             draftStatus: draftState().draftStatus ? draftState().draftStatus : defaultDraftStatus()
@@ -75,13 +77,19 @@ export class DraftManager extends React.Component<Props, State> {
 
     render() {
 
-        let {availablePlayers, draftPicks, teams, draftStatus, lastSelectedPlayer} = this.state;
+        let {availablePlayers, targetedPlayers, draftPicks, teams, draftStatus, lastSelectedPlayer} = this.state;
 
         const addPlayer = (player: Player) => {
             let updated: Player[] = availablePlayers;
             updated.push(player);
 
-            localStorage.setItem('draft', JSON.stringify(updated, undefined, 4));
+            // update local storage draft with updated available players.
+            localStorage.setItem('draft', JSON.stringify({
+                ...this.state,
+                availablePlayers: updated
+            }, undefined, 4));
+
+            console.log("added player: " + player.name);
 
             this.setState({
                 availablePlayers: updated
@@ -102,8 +110,10 @@ export class DraftManager extends React.Component<Props, State> {
             let updatedDraftStatus = draftStatus;
             let updatedTeams: Team[] = teams;
             let updatedLastSelectedPlayer = lastSelectedPlayer;
+            let updatedTargetedPlayers = targetedPlayers;
             for (let player of players) {
 
+                // remove player from available players.
                 let availableAfterPick = updatedAvailablePlayers.filter(p => Utility.standardizeName(p.name) !== Utility.standardizeName(player?.name));
                 if (updatedAvailablePlayers.length === availableAfterPick.length + 1) {
                     updatedAvailablePlayers = [...availableAfterPick];
@@ -117,27 +127,52 @@ export class DraftManager extends React.Component<Props, State> {
                 currentTeam.players.push(player);
                 updatedTeams[teamIndex] = currentTeam;
 
+                // adds to last draft pick.
                 updatedDraftPicks.push(player);
 
+                // progresses to next turn via selected draft style (snake).
                 updatedDraftStatus = nextTurnSnake(updatedDraftStatus, teams);
 
+                // update last selected player.
                 updatedLastSelectedPlayer = player;
+
+                // remove player from targeted players if it exists.
+                updatedTargetedPlayers = updatedTargetedPlayers.filter(p => Utility.standardizeName(p.name) !== Utility.standardizeName(player.name));
 
             }
 
-            // updateRV(updatedAvailablePlayers);
             let updated = {
                 availablePlayers: updatedAvailablePlayers,
                 draftPicks: updatedDraftPicks,
                 teams: updatedTeams,
                 draftStatus: updatedDraftStatus,
-                lastSelectedPlayer: updatedLastSelectedPlayer
+                lastSelectedPlayer: updatedLastSelectedPlayer,
+                targetedPlayers: updatedTargetedPlayers
             };
 
             localStorage.setItem('draft', JSON.stringify(updated, undefined, 4));
 
+            console.log("targets: " + updatedTargetedPlayers.map(p => p.name).join(", "));
+
             this.setState(updated)
 
+        }
+
+        const targetPlayers = (players: Player[]) => {
+            let addPlayers = players.filter(p => !targetedPlayers.some(tp => Utility.standardizeName(tp.name) === Utility.standardizeName(p.name)))
+            let updatedTargetedPlayers = [...targetedPlayers, ...addPlayers];
+
+            // update local storage draft with updated targeted players.
+            localStorage.setItem('draft', JSON.stringify({
+                ...this.state,
+                targetedPlayers: updatedTargetedPlayers
+            }, undefined, 4));
+
+            console.log("targets: " + updatedTargetedPlayers.map(p => p.name).join(", "));
+
+            this.setState({
+                targetedPlayers: updatedTargetedPlayers
+            });
         }
 
         const undoDraftPicks = (picks: number) => {
@@ -253,7 +288,9 @@ export class DraftManager extends React.Component<Props, State> {
                                 <Accordion.Header>Players</Accordion.Header>
                                 <Accordion.Body>
                                     <PlayerTable availablePlayers={availablePlayers}
+                                                 targetedPlayers={targetedPlayers}
                                                  onDraftPlayer={draftPlayers}
+                                                 onPlayerTargeted={targetPlayers}
                                                  onUpdatedAvailablePlayers={setAvailablePlayers}/>
                                 </Accordion.Body>
                             </Accordion.Item>
