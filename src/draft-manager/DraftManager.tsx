@@ -248,6 +248,7 @@ export class DraftManager extends React.Component<Props, State> {
                                 <Accordion.Header>Suggestions</Accordion.Header>
                                 <Accordion.Body>
                                     <SuggestedPlayersInsight players={availablePlayers}
+                                                             targets={targetedPlayers}
                                                              currentTeam={teams[draftStatus.currentTeam - 1]}
                                                              displayCount={draftConfig.display.suggestions.show}
                                                              onSubmit={draftPlayers}/>
