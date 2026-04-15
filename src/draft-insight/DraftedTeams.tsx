@@ -24,43 +24,49 @@ const TeamSummary = (props: { players: Player[], config: any }) => {
         <div>
             <p className={qbCount < starting.qb ? 'bg-danger' : 'bg-success'}>
                 QB: {qbCount} / {max.qb}</p>
-            <span>+{qb.splice(0, starting.qb).reduce(sumPoints, 0).toFixed(2)}</span>
+            <span>+{qb.slice(0, starting.qb).reduce(sumPoints, 0).toFixed(2)}</span>
         </div>
         <div>
             <p className={rbCount < starting.rb ? 'bg-danger' : 'bg-success'}>
                 RB: {rbCount} / {max.rb}</p>
-            <span>+{rb.splice(0, starting.rb).reduce(sumPoints, 0).toFixed(2)}</span>
+            <span>+{rb.slice(0, starting.rb).reduce(sumPoints, 0).toFixed(2)}</span>
         </div>
         <div>
             <p className={wrCount < starting.wr ? 'bg-danger' : 'bg-success'}>
                 WR: {wrCount} / {max.wr}</p>
-            <span>+{wr.splice(0, starting.wr).reduce(sumPoints, 0).toFixed(2)}</span>
+            <span>+{wr.slice(0, starting.wr).reduce(sumPoints, 0).toFixed(2)}</span>
         </div>
         <div>
             <p className={teCount < starting.te ? 'bg-danger' : 'bg-success'}>
                 TE: {teCount} / {max.te}</p>
-            <span>+{te.splice(0, starting.te).reduce(sumPoints, 0).toFixed(2)}</span>
+            <span>+{te.slice(0, starting.te).reduce(sumPoints, 0).toFixed(2)}</span>
         </div>
     </div>
 }
 
 export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: number, draft: any }, { key: string, lastForcePick: string }> {
 
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            key: "0",
+            lastForcePick: '0'
+        };
+    }
+
+    componentDidUpdate() {
+        const teamIndex = (this.props.currentTeam - 1).toString();
+        if (teamIndex !== this.state.lastForcePick) {
+            this.setState({
+                key: teamIndex,
+                lastForcePick: teamIndex
+            });
+        }
+    }
+
     render() {
         let {teams, currentTeam, draft} = this.props;
-        let {key, lastForcePick} = this.state;
-
-        const teamIndex = (currentTeam - 1).toString();
-
-        const movePick = teamIndex !== lastForcePick;
-        if (movePick) {
-            key = teamIndex;
-            this.setState({
-                lastForcePick: key,
-                key: key
-            })
-        }
-
+        let {key} = this.state;
 
         const title = (idx: number, currentPick: number, yourTeam: number) => {
             let k = (idx + 1);
@@ -69,7 +75,6 @@ export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: 
             v = v + (currentPick === k ? "*" : "");
             return v;
         }
-
 
         const setKey = (k: string) => this.setState({key: k})
         return (
@@ -92,15 +97,6 @@ export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: 
                 </Tabs>
             </div>
         );
-    }
-
-
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            key: "0",
-            lastForcePick: '0'
-        };
     }
 }
 

@@ -82,7 +82,7 @@ export function updateRV(players: Player[]) {
     let wrCkValue = draftConfig.roster.starting.wr * draftConfig.teamCount;
     let teCkValue = draftConfig.roster.starting.te * draftConfig.teamCount;
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
-    let defCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
+    let defCkValue = draftConfig.roster.starting.def * draftConfig.teamCount;
 
     let pointsByPosition: any = new Map<string, Player[]>();
     players.forEach(p => {

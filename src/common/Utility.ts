@@ -18,7 +18,7 @@ class Utility {
 
     static filterAbbreviations(name: string): string {
         let standardized: string = name;
-        standardized = standardized.replace("/[^a-zA-Z ]/g", "");
+        standardized = standardized.replace(/[^a-zA-Z ]/g, "");
         standardized = standardized.replaceAll(".", "");
         standardized = standardized.replaceAll("/", "");
         return standardized;

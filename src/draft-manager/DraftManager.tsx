@@ -64,12 +64,13 @@ export class DraftManager extends React.Component<Props, State> {
             }
         };
 
+        const saved = draftState();
         this.state = {
-            availablePlayers: draftState().availablePlayers ? draftState().availablePlayers : [],
-            targetedPlayers: draftState().targetedPlayers ? draftState().targetedPlayers : [],
-            draftPicks: draftState().draftPicks ? draftState().draftPicks : [],
-            teams: draftState().teams ? draftState().teams : populateTeams(),
-            draftStatus: draftState().draftStatus ? draftState().draftStatus : defaultDraftStatus()
+            availablePlayers: saved.availablePlayers || [],
+            targetedPlayers: saved.targetedPlayers || [],
+            draftPicks: saved.draftPicks || [],
+            teams: saved.teams || populateTeams(),
+            draftStatus: saved.draftStatus || defaultDraftStatus()
         };
 
     }
@@ -80,8 +81,7 @@ export class DraftManager extends React.Component<Props, State> {
         let {availablePlayers, targetedPlayers, draftPicks, teams, draftStatus, lastSelectedPlayer} = this.state;
 
         const addPlayer = (player: Player) => {
-            let updated: Player[] = availablePlayers;
-            updated.push(player);
+            let updated: Player[] = [...availablePlayers, player];
 
             // update local storage draft with updated available players.
             localStorage.setItem('draft', JSON.stringify({

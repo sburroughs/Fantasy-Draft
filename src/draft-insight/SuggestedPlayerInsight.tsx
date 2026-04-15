@@ -22,37 +22,37 @@ const SuggestedPlayersInsight = (props: { players: Player[], displayCount: numbe
             // remove qbs from best if already drafted
             .filter((p:Player)=> !(p.position === "QB" && team.players.some(p => p.position === 'QB')))
             .sort(sortByPoints)
-            .splice(0, limit);
+            .slice(0, limit);
     }
 
     function getADP(limit: number): Player[] {
         return [...players]
             .sort(sortByADP)
-            .splice(0, limit);
+            .slice(0, limit);
     }
 
     function getBestQB(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "QB")
-            .splice(0, limit);
+            .slice(0, limit);
     }
 
     function getBestRB(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "RB")
-            .splice(0, limit);
+            .slice(0, limit);
     }
 
     function getBestWR(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "WR")
-            .splice(0, limit);
+            .slice(0, limit);
     }
 
     function getBestTE(limit: number): Player[] {
         return [...players]
             .filter((p: Player) => p.position === "TE")
-            .splice(0, limit);
+            .slice(0, limit);
     }
 
     return (

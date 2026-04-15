@@ -38,7 +38,7 @@ const DraftByText = (props: Props) => {
                     console.log("Expecting full draft json. Skipping: " + draftedIndex);
 
                     //remove already drafted players
-                    playerNames = playerNames.splice(draftedIndex + 1);
+                    playerNames = playerNames.slice(draftedIndex + 1);
                     console.log("Removed players already drafted: " + draftedIndex);
                 }
             }
@@ -84,7 +84,7 @@ const DraftByText = (props: Props) => {
 
         props.onSubmit(selectedPlayers);
 
-        let remainingPlayers = playerNames.splice(selectedPlayers.length);
+        let remainingPlayers = playerNames.slice(selectedPlayers.length);
         let updatedText = JSON.stringify(remainingPlayers);
 
         setDraftByTextValue(updatedText);
