@@ -3,11 +3,12 @@ import {Tab, Tabs} from 'react-bootstrap';
 import {Player, Team} from "../common/Player";
 import {TopPlayerList} from "./TopPlayerList";
 
-const SuggestedPlayersInsight = (props: { players: Player[], displayCount: number, onSubmit: any, currentTeam: Team }) => {
+const SuggestedPlayersInsight = (props: { players: Player[], targets: Player[], displayCount: number, onSubmit: any, currentTeam: Team }) => {
     const [key, setKey] = useState("best")
     const players = [...props.players];
+    const targets = props.targets;
 
-    function sortByPoints(p1: Player, p2: Player) {
+    function sortByRV(p1: Player, p2: Player) {
         return p2.relativeValue - p1.relativeValue;
     }
 
@@ -21,7 +22,7 @@ const SuggestedPlayersInsight = (props: { players: Player[], displayCount: numbe
             .filter((p:Player)=> !(p.position === "K" || p.position === "DEF"))
             // remove qbs from best if already drafted
             .filter((p:Player)=> !(p.position === "QB" && team.players.some(p => p.position === 'QB')))
-            .sort(sortByPoints)
+            .sort(sortByRV)
             .slice(0, limit);
     }
 
@@ -55,6 +56,12 @@ const SuggestedPlayersInsight = (props: { players: Player[], displayCount: numbe
             .slice(0, limit);
     }
 
+    function getBestTargets(limit: number): Player[] {
+        return [...targets]
+            .sort(sortByRV)
+            .slice(0, limit);
+    }
+
     return (
         <Tabs id="suggested-player-tabs"
               activeKey={key}
@@ -77,6 +84,9 @@ const SuggestedPlayersInsight = (props: { players: Player[], displayCount: numbe
             </Tab>
             <Tab eventKey="te" title="TE">
                 <TopPlayerList players={getBestTE(props.displayCount)} keyId={"te"} onSubmit={props.onSubmit}></TopPlayerList>
+            </Tab>
+            <Tab eventKey="targets" title="★">
+                <TopPlayerList players={getBestTargets(props.displayCount)} keyId={"targets"} onSubmit={props.onSubmit}></TopPlayerList>
             </Tab>
         </Tabs>
     );
