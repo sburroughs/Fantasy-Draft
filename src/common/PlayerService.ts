@@ -4,19 +4,19 @@ import draftConfig from "../config/DefaultConfig.json"
 
 export function updatePlayersRVandTier(basePlayers: Player[]) {
 
-    let pointsByPosition: any = new Map<string, Player[]>();
+    let pointsByPosition: Map<string, Player[]> = new Map<string, Player[]>();
     basePlayers.forEach(p => {
-        let x = pointsByPosition.has(p.position) ? pointsByPosition.get(p.position) : []
+        let x = pointsByPosition.has(p.position) ? pointsByPosition.get(p.position)! : []
         x.push(p);
         pointsByPosition.set(p.position, x);
     });
 
-    let qb: Player[] = pointsByPosition.get("QB");
-    let rb: Player[] = pointsByPosition.get("RB");
-    let wr: Player[] = pointsByPosition.get("WR");
-    let te: Player[] = pointsByPosition.get("TE");
-    let k: Player[] = pointsByPosition.get("K");
-    // let def: Player[] = pointsByPosition.get("DEF");
+    let qb: Player[] = pointsByPosition.get("QB")!;
+    let rb: Player[] = pointsByPosition.get("RB")!;
+    let wr: Player[] = pointsByPosition.get("WR")!;
+    let te: Player[] = pointsByPosition.get("TE")!;
+    let k: Player[] = pointsByPosition.get("K")!;
+    // let def: Player[] = pointsByPosition.get("DEF")!;
 
     let qbPoint: number[] = qb.slice(0, 32).map((p: Player) => p.points);
     let rbPoint: number[] = rb.slice(0, 64).map((p: Player) => p.points);
@@ -84,9 +84,9 @@ export function updateRV(players: Player[]) {
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
     let defCkValue = draftConfig.roster.starting.def * draftConfig.teamCount;
 
-    let pointsByPosition: any = new Map<string, Player[]>();
+    let pointsByPosition: Map<string, Player[]> = new Map<string, Player[]>();
     players.forEach(p => {
-        let x = pointsByPosition.has(p.position) ? pointsByPosition.get(p.position) : []
+        let x = pointsByPosition.has(p.position) ? pointsByPosition.get(p.position)! : []
         x.push(p);
         pointsByPosition.set(p.position, x);
     });
@@ -102,12 +102,12 @@ export function updateRV(players: Player[]) {
 
     }
 
-    let qb: Player[] = pointsByPosition.get("QB");
-    let rb: Player[] = pointsByPosition.get("RB");
-    let wr: Player[] = pointsByPosition.get("WR");
-    let te: Player[] = pointsByPosition.get("TE");
-    let k: Player[] = pointsByPosition.get("K");
-    let def: Player[] = pointsByPosition.get("DEF");
+    let qb: Player[] = pointsByPosition.get("QB")!;
+    let rb: Player[] = pointsByPosition.get("RB")!;
+    let wr: Player[] = pointsByPosition.get("WR")!;
+    let te: Player[] = pointsByPosition.get("TE")!;
+    let k: Player[] = pointsByPosition.get("K")!;
+    let def: Player[] = pointsByPosition.get("DEF")!;
 
     let qbRvValue = getPoints(qb, qbCkValue);
     let rbRvValue = getPoints(rb, rbCkValue);

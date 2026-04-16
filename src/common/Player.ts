@@ -15,10 +15,10 @@ export interface Team {
 }
 
 export interface CurrentDraftStatus {
-    currentTeam: any
-    currentRound: any
-    currentPick: any
-    currentRoundPick: any
+    currentTeam: number
+    currentRound: number
+    currentPick: number
+    currentRoundPick: number
 }
 
 

@@ -1,7 +1,13 @@
-import {NflTeam, NflTeams} from "../common/Player";
+import {NflTeam, NflTeams, Player} from "../common/Player";
 import React from "react";
+import {Column} from "react-data-grid";
 
-export const Cells: any = new Map<string, any>([
+interface FilterRendererProps {
+    value: string;
+    onChange: (value: string) => void;
+}
+
+export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>>([
     ["adp",
         {
             key: 'adp',
@@ -32,7 +38,7 @@ export const Cells: any = new Map<string, any>([
             name: 'Name',
             frozen: true,
             sortable: true,
-            filterRenderer: (p: any) => (
+            filterRenderer: (p: FilterRendererProps) => (
                 <div className="rdg-filter-container">
                     <input
                         className="rdg-filter input-sm"
@@ -80,7 +86,7 @@ export const Cells: any = new Map<string, any>([
             width: 30,
             frozen: true,
             sortable: false,
-            filterRenderer: (p: any) => (
+            filterRenderer: (p: FilterRendererProps) => (
                 <div className="rdg-filter-container">
                     <select className="rdg-filter" value={p.value} onChange={e => p.onChange(e.target.value)}>
                         <option value="All">All</option>
@@ -105,7 +111,7 @@ export const Cells: any = new Map<string, any>([
             width: 60,
             frozen: true,
             sortable: false,
-            filterRenderer: (p: any) => (
+            filterRenderer: (p: FilterRendererProps) => (
                 <div className="rdg-filter-container">
                     <select className="rdg-filter" value={p.value} onChange={e => p.onChange(e.target.value)}>
                         <option value="All">All</option>

@@ -34,10 +34,10 @@ export class DraftManager extends React.Component<Props, State> {
 
     state: State;
 
-    constructor(props: any) {
+    constructor(props: Props) {
         super(props);
 
-        const draftState = (): any => {
+        const draftState = (): Partial<State> => {
             return localStorage.getItem("draft") ?
                 JSON.parse(localStorage.getItem("draft") || "{}") :
                 {
@@ -97,7 +97,7 @@ export class DraftManager extends React.Component<Props, State> {
 
         }
 
-        const setAvailablePlayers = (players: any) => {
+        const setAvailablePlayers = (players: Player[]) => {
             this.setState({
                 availablePlayers: players
             });

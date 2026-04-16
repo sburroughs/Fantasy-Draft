@@ -4,24 +4,24 @@ import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 import {NflTeam, NflTeams, Player} from "../common/Player";
 
-function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
+function ConfigurationModal(props: { onAdd: (player: Player) => void, onDraft: (players: Player[]) => void }) {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handle = (event: any) => {
+    const handle = (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
         event.stopPropagation();
 
         const form = event.currentTarget;
 
-        let name = form[0].value;
-        let position = form[1].value;
-        let points = Number(form[2].value);
-        let adp = Number(form[3].value);
-        let team = form[4].value;
+        let name = (form[0] as HTMLInputElement).value;
+        let position = (form[1] as HTMLSelectElement).value;
+        let points = Number((form[2] as HTMLInputElement).value);
+        let adp = Number((form[3] as HTMLInputElement).value);
+        let team = (form[4] as HTMLSelectElement).value;
 
         const player: Player = {
             id: 0,
@@ -35,10 +35,11 @@ function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
             tier: 0
         }
 
-        if (event.nativeEvent.submitter.name === "add") {
+        const submitter = (event.nativeEvent as { submitter?: HTMLButtonElement }).submitter;
+        if (submitter?.name === "add") {
             props.onAdd(player);
         }
-        if (event.nativeEvent.submitter.name === "draft") {
+        if (submitter?.name === "draft") {
             props.onDraft([player]);
         }
 
@@ -62,7 +63,7 @@ function ConfigurationModal(props: { onAdd: any, onDraft: any }) {
                             <Form.Select aria-label="Select Player Position">
                                 <option value="QB">QB</option>
                                 <option value="RB">RB</option>
-                                <option value="WB">WR</option>
+                                <option value="WR">WR</option>
                                 <option value="TE">TE</option>
                                 <option value="K">K</option>
                                 <option value="DEF">DEF</option>

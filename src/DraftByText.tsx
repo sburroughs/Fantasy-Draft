@@ -5,7 +5,7 @@ import {NflTeam, NflTeams, Player} from "./common/Player";
 interface Props {
     availablePlayers: Player[]
     draftedPlayers: Player[]
-    onSubmit: any
+    onSubmit: (players: Player[]) => void
 }
 
 const DraftByText = (props: Props) => {
@@ -13,7 +13,7 @@ const DraftByText = (props: Props) => {
     const [draftByTextValue, setDraftByTextValue] = useState("[]");
     const [lastImportedIndex, setLastImportedIndex] = useState(0);
 
-    const draftByText = (event: any) => {
+    const draftByText = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         let playerNames: string[] = [];

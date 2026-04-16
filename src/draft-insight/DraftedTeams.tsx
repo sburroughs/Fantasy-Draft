@@ -2,8 +2,11 @@ import React from "react";
 import {Tab, Tabs} from 'react-bootstrap'
 import {Player, Team} from "../common/Player";
 import ListGroup from "react-bootstrap/ListGroup";
+import draftConfig from "../config/DefaultConfig.json";
 
-const TeamSummary = (props: { players: Player[], config: any }) => {
+type DraftConfig = typeof draftConfig;
+
+const TeamSummary = (props: { players: Player[], config: DraftConfig }) => {
 
     const qb = props.players.filter(p => p.position === "QB");
     const rb = props.players.filter(p => p.position === "RB");
@@ -44,9 +47,9 @@ const TeamSummary = (props: { players: Player[], config: any }) => {
     </div>
 }
 
-export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: number, draft: any }, { key: string, lastForcePick: string }> {
+export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: number, draft: DraftConfig }, { key: string, lastForcePick: string }> {
 
-    constructor(props: any) {
+    constructor(props: { teams: Team[], currentTeam: number, draft: DraftConfig }) {
         super(props);
         this.state = {
             key: "0",

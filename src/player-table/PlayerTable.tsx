@@ -25,17 +25,17 @@ const columns: readonly Column<Player>[] = config.display["player-board"]["show-
         }
         return Cells.has(fieldName);
     })
-    .map(fieldName => Cells.get(fieldName));
+    .map(fieldName => Cells.get(fieldName)!);
 
 const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[]) => {
 
     const getRowBackgroundClass = () => {
         let v = props.row.relativeValue;
-        let thresholds: any = config.display["player-board"]["gradient-thresholds"]["rv"];
+        let thresholds: Record<string, string> = config.display["player-board"]["gradient-thresholds"]["rv"];
         let tier = '0'; // defaults to 0 if no matches
         for (let i = 1; i < 10; i++) {
             let key = i.toString();
-            let value = thresholds[key];
+            let value = Number(thresholds[key]);
             if (v > value) {
                 tier = key
                 break
@@ -48,7 +48,7 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[])
 
     const positionStyles = "position-" + props.row.position.toLowerCase();
 
-    function getPicksSnake(totalTeams:any, draftPosition:any, totalRounds:any) {
+    function getPicksSnake(totalTeams: number, draftPosition: number, totalRounds: number) {
         const myPicks = [];
 
         for (let round = 1; round <= totalRounds; round++) {
@@ -104,9 +104,9 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[])
 interface Prop {
     availablePlayers: Player[]
     targetedPlayers: Player[]
-    onDraftPlayer: any
-    onPlayerTargeted: any
-    onUpdatedAvailablePlayers: any
+    onDraftPlayer: (players: Player[]) => void
+    onPlayerTargeted: (players: Player[]) => void
+    onUpdatedAvailablePlayers: (players: Player[]) => void
 }
 
 function PlayerTable(props: Prop) {

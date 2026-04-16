@@ -3,7 +3,7 @@ import {Tab, Tabs} from 'react-bootstrap';
 import {Player, Team} from "../common/Player";
 import {TopPlayerList} from "./TopPlayerList";
 
-const SuggestedPlayersInsight = (props: { players: Player[], targets: Player[], displayCount: number, onSubmit: any, currentTeam: Team }) => {
+const SuggestedPlayersInsight = (props: { players: Player[], targets: Player[], displayCount: number, onSubmit: (players: Player[]) => void, currentTeam: Team }) => {
     const [key, setKey] = useState("best")
     const players = [...props.players];
     const targets = props.targets;

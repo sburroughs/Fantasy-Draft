@@ -2,7 +2,9 @@ import {CurrentDraftStatus} from "../common/Player";
 
 export const nextTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) => {
 
-    let updatedTeam, updatedRound, updatedRoundPick;
+    let updatedTeam: number;
+    let updatedRound: number;
+    let updatedRoundPick: number;
     let updatedPick = draftStatus.currentPick + 1
 
     let count = updatedPick % (teams.length * 2);
@@ -16,7 +18,7 @@ export const nextTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) => {
         updatedTeam = draftStatus.currentTeam + 1;
         updatedRound = draftStatus.currentRound;
         updatedRoundPick = draftStatus.currentRoundPick + 1;
-    } else if (count > teams.length || count === 0) {
+    } else {
         //decrease
         updatedTeam = draftStatus.currentTeam - 1;
         updatedRound = draftStatus.currentRound;
@@ -33,7 +35,9 @@ export const nextTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) => {
 
 export const previousTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) => {
 
-    let updatedTeam, updatedRound, updatedRoundPick;
+    let updatedTeam: number;
+    let updatedRound: number;
+    let updatedRoundPick: number;
     let updatedPick = draftStatus.currentPick - 1
 
     let count = updatedPick % (teams.length * 2);
@@ -47,7 +51,7 @@ export const previousTurnSnake = (draftStatus: CurrentDraftStatus, teams: any) =
         updatedTeam = draftStatus.currentTeam - 1;
         updatedRound = draftStatus.currentRound;
         updatedRoundPick = draftStatus.currentRoundPick - 1;
-    } else if (count > teams.length || count === 0) {
+    } else {
         //increase
         updatedTeam = draftStatus.currentTeam + 1;
         updatedRound = draftStatus.currentRound;

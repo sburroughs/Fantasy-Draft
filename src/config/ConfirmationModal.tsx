@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal"
 import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 
-function ConfirmationModal(props: { buttonText: string, onConfirm: any }) {
+function ConfirmationModal(props: { buttonText: string, onConfirm: () => void }) {
     const [show, setShow] = useState(false);
 
     const [valid, setValid] = useState(false);
@@ -12,7 +12,7 @@ function ConfirmationModal(props: { buttonText: string, onConfirm: any }) {
 
     const handleShow = () => setShow(true);
 
-    const handleSubmit = (event: any) => {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 
         event.preventDefault();
         event.stopPropagation();

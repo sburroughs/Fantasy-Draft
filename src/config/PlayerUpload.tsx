@@ -4,7 +4,7 @@ import Papa, {ParseResult} from 'papaparse';
 import {Player} from "../common/Player";
 import {updatePlayersRVandTier} from "../common/PlayerService"
 
-export const PlayerUpload = (props: {onChangeValue: any}) => {
+export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}) => {
 
     const {onChangeValue} = props;
 
@@ -32,7 +32,7 @@ export const PlayerUpload = (props: {onChangeValue: any}) => {
             POINTS = "POINTS"
         }
 
-        const getHeaderIndexes = (indexRow: any): Map<HeaderType, number> => {
+        const getHeaderIndexes = (indexRow: string[]): Map<HeaderType, number> => {
             let indexMapping: Map<HeaderType, number> = new Map();
             indexMapping.set(HeaderType.NAME, indexRow.indexOf("Player"));
             indexMapping.set(HeaderType.POSITION, indexRow.indexOf("Pos"));
@@ -42,7 +42,7 @@ export const PlayerUpload = (props: {onChangeValue: any}) => {
             return indexMapping;
         }
 
-        const getPlayer = (row: any, headerIndex: Map<HeaderType, number>, idx: any): Player => {
+        const getPlayer = (row: string[], headerIndex: Map<HeaderType, number>, idx: number): Player => {
 
             function defaultIndex(): number {
                 return 0;
@@ -55,7 +55,7 @@ export const PlayerUpload = (props: {onChangeValue: any}) => {
             let name = row[nameIndex]
 
             let adpIndex: number = headerIndex.get(HeaderType.ADP) || defaultIndex()
-            let adp = Math.round(row[adpIndex]);
+            let adp = Math.round(Number(row[adpIndex]));
             if (!adp) {
                 adp = 999;// default
             }
@@ -90,7 +90,7 @@ export const PlayerUpload = (props: {onChangeValue: any}) => {
             onChangeValue(parsedResults);
         }
 
-        acceptedFiles.forEach((file: any) => reader.readAsText(file));
+        acceptedFiles.forEach((file: File) => reader.readAsText(file));
     }, [onChangeValue]);
 
     const {getRootProps, getInputProps} = useDropzone({onDrop});

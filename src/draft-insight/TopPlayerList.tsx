@@ -4,7 +4,7 @@ import '../App.css';
 import {Button} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 
-export function TopPlayerList(props: { players: Player[], keyId: string, onSubmit: any }) {
+export function TopPlayerList(props: { players: Player[], keyId: string, onSubmit: (players: Player[]) => void }) {
     const {players, onSubmit} = props;
 
     return <>
