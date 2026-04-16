@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Tab, Tabs} from 'react-bootstrap'
 import {Player, Team} from "../common/Player";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -47,60 +47,47 @@ const TeamSummary = (props: { players: Player[], config: DraftConfig }) => {
     </div>
 }
 
-export class DraftedTeams extends React.Component<{ teams: Team[], currentTeam: number, draft: DraftConfig }, { key: string, lastForcePick: string }> {
+interface Props {
+    teams: Team[]
+    currentTeam: number
+    draft: DraftConfig
+}
 
-    constructor(props: { teams: Team[], currentTeam: number, draft: DraftConfig }) {
-        super(props);
-        this.state = {
-            key: "0",
-            lastForcePick: '0'
-        };
+function DraftedTeams({ teams, currentTeam, draft }: Props) {
+    const [key, setKey] = useState("0");
+
+    useEffect(() => {
+        setKey((currentTeam - 1).toString());
+    }, [currentTeam]);
+
+    const title = (idx: number, currentPick: number, yourTeam: number) => {
+        let k = (idx + 1);
+        let v: string = k.toString();
+        v = (yourTeam === k ? "@" : "") + v;
+        v = v + (currentPick === k ? "*" : "");
+        return v;
     }
 
-    componentDidUpdate() {
-        const teamIndex = (this.props.currentTeam - 1).toString();
-        if (teamIndex !== this.state.lastForcePick) {
-            this.setState({
-                key: teamIndex,
-                lastForcePick: teamIndex
-            });
-        }
-    }
-
-    render() {
-        let {teams, currentTeam, draft} = this.props;
-        let {key} = this.state;
-
-        const title = (idx: number, currentPick: number, yourTeam: number) => {
-            let k = (idx + 1);
-            let v: string = k.toString();
-            v = (yourTeam === k ? "@" : "") + v;
-            v = v + (currentPick === k ? "*" : "");
-            return v;
-        }
-
-        const setKey = (k: string) => this.setState({key: k})
-        return (
-            <div className={'panel-scrollable'}>
-                <Tabs id="suggested-player-tabs" activeKey={key} onSelect={(k) => setKey(k || '0')}>
-                    {teams.map((team, idx) =>
-                        <Tab eventKey={idx} key={idx} title={title(idx, currentTeam, draft.draftPosition)}>
-                            <ListGroup>
-                                {team.players.length === 0 && <ListGroup.Item>Empty</ListGroup.Item>}
-                                {team.players.length !== 0 &&
-                                <ListGroup.Item>
-                                    <TeamSummary players={team.players} config={draft}></TeamSummary>
-                                </ListGroup.Item>}
-                                {team.players.map((p, pIdx) =>
-                                    <ListGroup.Item key={p.id}>{"Round: " + (pIdx + 1) + " " + p.position + " " + p.name}</ListGroup.Item>
-                                ).reverse()}
-                            </ListGroup>
-                        </Tab>
-                    )}
-                </Tabs>
-            </div>
-        );
-    }
+    return (
+        <div className={'panel-scrollable'}>
+            <Tabs id="suggested-player-tabs" activeKey={key} onSelect={(k) => setKey(k || '0')}>
+                {teams.map((team, idx) =>
+                    <Tab eventKey={idx} key={idx} title={title(idx, currentTeam, draft.draftPosition)}>
+                        <ListGroup>
+                            {team.players.length === 0 && <ListGroup.Item>Empty</ListGroup.Item>}
+                            {team.players.length !== 0 &&
+                            <ListGroup.Item>
+                                <TeamSummary players={team.players} config={draft}></TeamSummary>
+                            </ListGroup.Item>}
+                            {team.players.map((p, pIdx) =>
+                                <ListGroup.Item key={p.id}>{"Round: " + (pIdx + 1) + " " + p.position + " " + p.name}</ListGroup.Item>
+                            ).reverse()}
+                        </ListGroup>
+                    </Tab>
+                )}
+            </Tabs>
+        </div>
+    );
 }
 
 export default DraftedTeams;
