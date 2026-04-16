@@ -19,9 +19,9 @@ const SuggestedPlayersInsight = (props: { players: Player[], targets: Player[], 
     function getBestAvailable(team: Team, limit: number): Player[] {
         return [...players]
             // remove kickers and defense. We don't desire them in Best suggestions, ever.
-            .filter((p:Player)=> !(p.position === "K" || p.position === "DEF"))
+            .filter((p: Player) => !(p.position === "K" || p.position === "DEF"))
             // remove qbs from best if already drafted
-            .filter((p:Player)=> !(p.position === "QB" && team.players.some(p => p.position === 'QB')))
+            .filter((p: Player) => !(p.position === "QB" && team.players.some(p => p.position === 'QB')))
             .sort(sortByRV)
             .slice(0, limit);
     }
@@ -32,27 +32,9 @@ const SuggestedPlayersInsight = (props: { players: Player[], targets: Player[], 
             .slice(0, limit);
     }
 
-    function getBestQB(limit: number): Player[] {
+    function getByPosition(position: string, limit: number): Player[] {
         return [...players]
-            .filter((p: Player) => p.position === "QB")
-            .slice(0, limit);
-    }
-
-    function getBestRB(limit: number): Player[] {
-        return [...players]
-            .filter((p: Player) => p.position === "RB")
-            .slice(0, limit);
-    }
-
-    function getBestWR(limit: number): Player[] {
-        return [...players]
-            .filter((p: Player) => p.position === "WR")
-            .slice(0, limit);
-    }
-
-    function getBestTE(limit: number): Player[] {
-        return [...players]
-            .filter((p: Player) => p.position === "TE")
+            .filter((p: Player) => p.position === position)
             .slice(0, limit);
     }
 
@@ -68,25 +50,25 @@ const SuggestedPlayersInsight = (props: { players: Player[], targets: Player[], 
             // @ts-ignore
               onSelect={(k) => setKey(k)}>
             <Tab eventKey="adp" title="ADP">
-                <TopPlayerList players={getADP(props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getADP(props.displayCount)} keyId={"adp"} onSubmit={props.onSubmit}/>
             </Tab>
             <Tab eventKey="best" title="BEST">
-                <TopPlayerList players={getBestAvailable(props.currentTeam, props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestAvailable(props.currentTeam, props.displayCount)} keyId={"best"} onSubmit={props.onSubmit}/>
             </Tab>
             <Tab eventKey="qb" title="QB">
-                <TopPlayerList players={getBestQB(props.displayCount)} keyId={"qb"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getByPosition("QB", props.displayCount)} keyId={"qb"} onSubmit={props.onSubmit}/>
             </Tab>
             <Tab eventKey="rb" title="RB">
-                <TopPlayerList players={getBestRB(props.displayCount)} keyId={"rb"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getByPosition("RB", props.displayCount)} keyId={"rb"} onSubmit={props.onSubmit}/>
             </Tab>
             <Tab eventKey="wr" title="WR">
-                <TopPlayerList players={getBestWR(props.displayCount)} keyId={"wr"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getByPosition("WR", props.displayCount)} keyId={"wr"} onSubmit={props.onSubmit}/>
             </Tab>
             <Tab eventKey="te" title="TE">
-                <TopPlayerList players={getBestTE(props.displayCount)} keyId={"te"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getByPosition("TE", props.displayCount)} keyId={"te"} onSubmit={props.onSubmit}/>
             </Tab>
             <Tab eventKey="targets" title="★">
-                <TopPlayerList players={getBestTargets(props.displayCount)} keyId={"targets"} onSubmit={props.onSubmit}></TopPlayerList>
+                <TopPlayerList players={getBestTargets(props.displayCount)} keyId={"targets"} onSubmit={props.onSubmit}/>
             </Tab>
         </Tabs>
     );

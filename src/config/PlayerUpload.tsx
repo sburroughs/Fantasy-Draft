@@ -81,8 +81,8 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
         }
 
         const reader = new FileReader();
-        reader.onabort = () => console.log("file reading was aborted");
-        reader.onerror = () => console.log("file reading failed");
+        reader.onabort = () => console.warn("file reading was aborted");
+        reader.onerror = () => console.error("file reading failed");
         reader.onload = () => {
             const csv: string = reader.result as string
             const unparsedData = Papa.parse(csv);

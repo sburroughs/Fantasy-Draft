@@ -60,7 +60,7 @@ function updateTierAndRv(players: Player[], tiers: number[][], rvIndex: number) 
         for (let j = tiers[i].length - 1; j >= 0; j--) {
             let p: Player = players[index];
             if (tiers[i][j] !== players[index].points) {
-                console.log("Mismatch encountered: " + tiers[i][j] + " " + players[index].points);
+                console.warn("Tier mismatch: expected " + tiers[i][j] + ", got " + players[index].points);
             }
             p.tier = tier;
             p.relativeValue = parseFloat((p.points - rvValue).toFixed(2))
