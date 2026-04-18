@@ -4,7 +4,7 @@ import Accordion from "react-bootstrap/Accordion"
 import Button from "react-bootstrap/Button";
 import draftConfig from '../config/DefaultConfig.json';
 import '../Player.css'
-import {useDraft} from "./useDraft";
+import {DraftProvider, useDraftContext} from "./DraftContext";
 import PlayerTable from "../player-table/PlayerTable";
 import {PlayerUpload} from "../config/PlayerUpload";
 import DraftedTeams from "../draft-insight/DraftedTeams";
@@ -19,12 +19,8 @@ interface Props {
     defaultTeamCount: number
 }
 
-export function DraftManager(_props: Props) {
-
-    const {
-        availablePlayers, targetedPlayers, draftPicks, teams, draftStatus, lastSelectedPlayer,
-        addPlayer, setAvailablePlayers, draftPlayers, targetPlayers, undoDraftPicks
-    } = useDraft();
+function DraftLayout() {
+    const {addPlayer, setAvailablePlayers, draftPlayers, undoDraftPicks} = useDraftContext();
 
     return (
         <Container fluid>
@@ -41,7 +37,7 @@ export function DraftManager(_props: Props) {
                     <AddPlayerModal onAdd={addPlayer} onDraft={draftPlayers}/>
                 </Col>
                 <Col lg={8} md={12}>
-                    <DraftStatusInsight status={draftStatus} playerTeam={draftConfig.draftPosition} lastSelectedPlayer={lastSelectedPlayer}/>
+                    <DraftStatusInsight playerTeam={draftConfig.draftPosition}/>
                 </Col>
             </Row>
             <Row>
@@ -51,10 +47,7 @@ export function DraftManager(_props: Props) {
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Suggestions</Accordion.Header>
                             <Accordion.Body>
-                                <SuggestedPlayersInsight players={availablePlayers}
-                                                         targets={targetedPlayers}
-                                                         currentTeam={teams[draftStatus.currentTeam - 1]}
-                                                         displayCount={draftConfig.display.suggestions.show}
+                                <SuggestedPlayersInsight displayCount={draftConfig.display.suggestions.show}
                                                          onSubmit={draftPlayers}/>
                             </Accordion.Body>
                         </Accordion.Item>
@@ -64,21 +57,19 @@ export function DraftManager(_props: Props) {
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Teams</Accordion.Header>
                             <Accordion.Body>
-                                <DraftedTeams teams={teams}
-                                              currentTeam={draftStatus.currentTeam}
-                                              draft={draftConfig}/>
+                                <DraftedTeams/>
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>Picks</Accordion.Header>
                             <Accordion.Body>
-                                <SelectedPicks picks={draftPicks}/>
+                                <SelectedPicks/>
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="2">
                             <Accordion.Header>Trends</Accordion.Header>
                             <Accordion.Body>
-                                <TrendInsight picks={draftPicks} teamCount={draftConfig.teamCount}/>
+                                <TrendInsight/>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
@@ -90,11 +81,7 @@ export function DraftManager(_props: Props) {
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Players</Accordion.Header>
                             <Accordion.Body>
-                                <PlayerTable availablePlayers={availablePlayers}
-                                             targetedPlayers={targetedPlayers}
-                                             onDraftPlayer={draftPlayers}
-                                             onPlayerTargeted={targetPlayers}
-                                             onUpdatedAvailablePlayers={setAvailablePlayers}/>
+                                <PlayerTable/>
                             </Accordion.Body>
                         </Accordion.Item>
                     </Accordion>
@@ -102,5 +89,13 @@ export function DraftManager(_props: Props) {
                 </Col>
             </Row>
         </Container>
+    );
+}
+
+export function DraftManager(_props: Props) {
+    return (
+        <DraftProvider>
+            <DraftLayout/>
+        </DraftProvider>
     );
 }

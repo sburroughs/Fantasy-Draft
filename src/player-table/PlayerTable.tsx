@@ -17,79 +17,55 @@ import config from '../config/DefaultConfig.json';
 import {Player} from '../common/Player';
 import {createPortal} from "react-dom";
 import {Cells} from "./Cells";
+import {useDraftContext} from "../draft-manager/DraftContext";
 
 const columns: readonly Column<Player>[] = config.display["player-board"]["show-column"]
     .filter((fieldName: string) => {
-        if(!Cells.has(fieldName)) {
+        if (!Cells.has(fieldName)) {
             console.warn(`Field "${fieldName}" is not defined in Cells. Please check your configuration.`);
         }
         return Cells.has(fieldName);
     })
     .map(fieldName => Cells.get(fieldName)!);
 
-const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[]) => {
+const picksInDraft = new Set(getPicksSnake(config.teamCount, config.draftPosition, config.draftRounds));
 
+function getPicksSnake(totalTeams: number, draftPosition: number, totalRounds: number): number[] {
+    const myPicks = [];
+    for (let round = 1; round <= totalRounds; round++) {
+        let overallPick;
+        if (round % 2 === 1) {
+            overallPick = (round - 1) * totalTeams + draftPosition;
+        } else {
+            overallPick = (round - 1) * totalTeams + (totalTeams - draftPosition + 1);
+        }
+        myPicks.push(overallPick);
+    }
+    return myPicks;
+}
+
+const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[]) => {
     const getRowBackgroundClass = () => {
-        let v = props.row.relativeValue;
-        let thresholds: Record<string, string> = config.display["player-board"]["gradient-thresholds"]["rv"];
-        let tier = '0'; // defaults to 0 if no matches
+        const v = props.row.relativeValue;
+        const thresholds: Record<string, string> = config.display["player-board"]["gradient-thresholds"]["rv"];
+        let tier = '0';
         for (let i = 1; i < 10; i++) {
-            let key = i.toString();
-            let value = Number(thresholds[key]);
-            if (v > value) {
-                tier = key
-                break
+            const key = i.toString();
+            if (v > Number(thresholds[key])) {
+                tier = key;
+                break;
             }
         }
         return "rv-" + tier;
     };
 
-    const tierStyle = "tier-" + props.row.tier;
-
-    const positionStyles = "position-" + props.row.position.toLowerCase();
-
-    function getPicksSnake(totalTeams: number, draftPosition: number, totalRounds: number) {
-        const myPicks = [];
-
-        for (let round = 1; round <= totalRounds; round++) {
-            let overallPick;
-
-            if (round % 2 === 1) {
-                // Odd rounds: order goes 1 → totalTeams
-                overallPick = (round - 1) * totalTeams + draftPosition;
-            } else {
-                // Even rounds: order goes totalTeams → 1
-                overallPick = (round - 1) * totalTeams + (totalTeams - draftPosition + 1);
-            }
-
-            myPicks.push(overallPick);
-        }
-
-        return myPicks;
-    }
-    const picksInDraft = new Set(getPicksSnake(config.teamCount, config.draftPosition, config.draftRounds));
-    const projectedPickStyles = () => {
-        if(picksInDraft.has(props.row.adp)) {
-            return "projected-pick";
-        }
-        return ""
-    }
-
-    const targetedPlayerStyles = () => {
-        // "targeted-pick" if in targetedPlayers
-        if (targetedPlayers.some(player => player.id === props.row.id)) {
-            return "targeted-pick";
-        }
-        return ""
-    }
-
     const gridStyles = () => [
         getRowBackgroundClass(),
-        tierStyle,
-        positionStyles,
-        projectedPickStyles(),
-        targetedPlayerStyles(),
-    ].join(" ")
+        "tier-" + props.row.tier,
+        "position-" + props.row.position.toLowerCase(),
+        picksInDraft.has(props.row.adp) ? "projected-pick" : "",
+        targetedPlayers.some(player => player.id === props.row.id) ? "targeted-pick" : "",
+    ].join(" ");
 
     return (
         <ContextMenuTrigger id="grid-context-menu" collect={() => ({rowIdx: props.rowIdx})}>
@@ -100,19 +76,11 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[])
     );
 }
 
-
-interface Prop {
-    availablePlayers: Player[]
-    targetedPlayers: Player[]
-    onDraftPlayer: (players: Player[]) => void
-    onPlayerTargeted: (players: Player[]) => void
-    onUpdatedAvailablePlayers: (players: Player[]) => void
-}
-
-function PlayerTable(props: Prop) {
+function PlayerTable() {
+    const {availablePlayers, targetedPlayers, draftPlayers, targetPlayers, setAvailablePlayers} = useDraftContext();
 
     const [[sortColumn, sortDirection], setSort] = useState<[string, SortDirection]>(['adp', 'ASC']);
-    const [selectedRows, setSelectedRows] = useState(() => new Set<number>()); //TODO: remove with selectedrow once working
+    const [selectedRows, setSelectedRows] = useState(() => new Set<number>());
     const [filters, setFilters] = useState<Filters>({
         position: 'All',
         team: 'All',
@@ -120,18 +88,15 @@ function PlayerTable(props: Prop) {
     });
 
     const playerSubset: Player[] = useMemo(() => {
-
-        let filteredPlayers: Player[] = [...props.availablePlayers].filter(p => {
-            return (
-                (filters.position !== 'All' ? p.position === filters.position : true)
-                && (filters.name ? p.name.toLowerCase().includes(filters.name.toLowerCase()) : true)
-                && (filters.team !== 'All' ? p.team === filters.team : true)
-            );
-        });
+        let filteredPlayers: Player[] = [...availablePlayers].filter(p =>
+            (filters.position !== 'All' ? p.position === filters.position : true)
+            && (filters.name ? p.name.toLowerCase().includes(filters.name.toLowerCase()) : true)
+            && (filters.team !== 'All' ? p.team === filters.team : true)
+        );
 
         if (sortDirection === 'NONE') return filteredPlayers;
 
-        let sortedPlayers: Player[] = [...filteredPlayers];
+        let sortedPlayers = [...filteredPlayers];
         switch (sortColumn) {
             case 'name':
                 sortedPlayers = sortedPlayers.sort((a, b) => a[sortColumn].localeCompare(b[sortColumn]));
@@ -143,42 +108,29 @@ function PlayerTable(props: Prop) {
             case 'relativeValue':
                 sortedPlayers = sortedPlayers.sort((a, b) => a[sortColumn] - b[sortColumn]);
                 break;
-            default:
         }
         return sortDirection === 'DESC' ? sortedPlayers.reverse() : sortedPlayers;
-
-    }, [props.availablePlayers, sortDirection, sortColumn, filters]);
+    }, [availablePlayers, sortDirection, sortColumn, filters]);
 
     const handleRowsUpdate = useCallback(({fromRow, toRow, updated}: RowsUpdateEvent<Partial<Player>>) => {
         const newRows = [...playerSubset];
-
         for (let i = fromRow; i <= toRow; i++) {
             newRows[i] = {...newRows[i], ...updated};
         }
-
-        props.onUpdatedAvailablePlayers(newRows);
-    }, [props, playerSubset]);
+        setAvailablePlayers(newRows);
+    }, [setAvailablePlayers, playerSubset]);
 
     const handleSort = useCallback((columnKey: string, direction: SortDirection) => {
         setSort([columnKey, direction]);
     }, []);
 
-
     const onPlayerDraft = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
-        let player: Player = playerSubset[rowIdx];
-
-        props.onDraftPlayer([player]);
-
-        setFilters({
-            position: 'All',
-            team: 'All',
-            name: ''
-        });
+        draftPlayers([playerSubset[rowIdx]]);
+        setFilters({position: 'All', team: 'All', name: ''});
     }
 
     const onPlayerTargeted = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
-        let player: Player = playerSubset[rowIdx];
-        props.onPlayerTargeted([player]);
+        targetPlayers([playerSubset[rowIdx]]);
     }
 
     return (
@@ -200,7 +152,7 @@ function PlayerTable(props: Prop) {
                         enableFilters={true}
                         filters={filters}
                         onFiltersChange={setFilters}
-                        rowRenderer={(rrp) => RowRenderer(rrp, props.targetedPlayers)}
+                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers)}
                     />
                 )}
             </AutoSizer>
