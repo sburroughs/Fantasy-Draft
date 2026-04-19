@@ -10,13 +10,13 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
 
     const onDrop = useCallback(acceptedFiles => {
 
-        const parse = (data: ParseResult): Player[] => {
+        const parse = (data: ParseResult<string[]>): Player[] => {
 
             let indexMapping = getHeaderIndexes(data.data[0]);
             let basePlayers: Player[] = data.data
-                .splice(1) // we already have header indexes. remove index row.
-                .filter(d => d.length > 1) // ensure valid row. helps remove "" empty rows.
-                .map((d, idx) => getPlayer(d, indexMapping, idx));
+                .slice(1) // we already have header indexes. skip header row.
+                .filter((d: string[]) => d.length > 1) // ensure valid row. helps remove "" empty rows.
+                .map((d: string[], idx: number) => getPlayer(d, indexMapping, idx));
 
             updatePlayersRVandTier(basePlayers);
 
@@ -85,7 +85,7 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
         reader.onerror = () => console.error("file reading failed");
         reader.onload = () => {
             const csv: string = reader.result as string
-            const unparsedData = Papa.parse(csv);
+            const unparsedData = Papa.parse<string[]>(csv);
             const parsedResults: Player[] = parse(unparsedData);
             onChangeValue(parsedResults);
         }
