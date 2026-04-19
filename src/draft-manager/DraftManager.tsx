@@ -20,7 +20,7 @@ interface Props {
 }
 
 function DraftLayout() {
-    const {addPlayer, setAvailablePlayers, draftPlayers, undoDraftPicks} = useDraftContext();
+    const {addPlayer, clearPlayers, setAvailablePlayers, draftPlayers, undoDraftPicks} = useDraftContext();
 
     return (
         <Container fluid>
@@ -31,6 +31,8 @@ function DraftLayout() {
                     </Button>
                     <ConfirmationModal buttonText={"Restart Draft"}
                                        onConfirm={() => undoDraftPicks(1000)}/>
+                    <ConfirmationModal buttonText={"Clear Players"}
+                                       onConfirm={clearPlayers}/>
                     <Button onClick={() => undoDraftPicks(1)}>
                         Undo Pick
                     </Button>

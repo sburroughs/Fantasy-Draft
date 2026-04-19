@@ -51,6 +51,16 @@ export function useDraft() {
         localStorage.setItem('draft', JSON.stringify(state, undefined, 4));
     }, [state]);
 
+    const clearPlayers = useCallback(() => {
+        setState({
+            availablePlayers: [],
+            targetedPlayers: [],
+            draftPicks: [],
+            teams: populateTeams(),
+            draftStatus: defaultDraftStatus()
+        });
+    }, []);
+
     const addPlayer = useCallback((player: Player) => {
         setState(prev => ({
             ...prev,
@@ -157,6 +167,7 @@ export function useDraft() {
     return {
         ...state,
         addPlayer,
+        clearPlayers,
         setAvailablePlayers,
         draftPlayers,
         targetPlayers,
