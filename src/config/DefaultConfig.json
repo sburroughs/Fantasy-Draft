@@ -1,6 +1,6 @@
 {
-  "teamCount": 12,
-  "draftPosition": 2,
+  "teamCount": 10,
+  "draftPosition": 8,
   "draftRounds": 15,
   "roster": {
     "size": 15,
@@ -38,16 +38,31 @@
     },
     "player-board": {
       "show-column": [
+        "draft-player",
+        "rank",
+        "position-rank",
         "adp",
         "tier",
         "name",
         "points",
+        "vor",
         "rv",
         "position",
         "team"
       ],
       "gradient-thresholds": {
         "rv": {
+          "1": "120",
+          "2": "90",
+          "3": "60",
+          "4": "30",
+          "5": "0",
+          "6": "-20",
+          "7": "-40",
+          "8": "-60",
+          "9": "-80"
+        },
+        "vor": {
           "1": "120",
           "2": "90",
           "3": "60",

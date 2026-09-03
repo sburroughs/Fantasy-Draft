@@ -29,43 +29,68 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
             POSITION = "POSITION",
             ADP = "ADP",
             TEAM = "TEAM",
-            POINTS = "POINTS"
+            POINTS = "POINTS",
+            VOR = "VOR",
+            RANK = "RANK"
+        }
+
+        const findColumn = (indexRow: string[], candidates: string[]): number => {
+            for (const candidate of candidates) {
+                const index = indexRow.indexOf(candidate);
+                if (index !== -1) {
+                    return index;
+                }
+            }
+            return -1;
         }
 
         const getHeaderIndexes = (indexRow: string[]): Map<HeaderType, number> => {
             let indexMapping: Map<HeaderType, number> = new Map();
-            indexMapping.set(HeaderType.NAME, indexRow.indexOf("Player"));
-            indexMapping.set(HeaderType.POSITION, indexRow.indexOf("Pos"));
-            indexMapping.set(HeaderType.ADP, indexRow.indexOf("ADP"));
-            indexMapping.set(HeaderType.TEAM, indexRow.indexOf("Team"));
-            indexMapping.set(HeaderType.POINTS, indexRow.indexOf("FF Pts"));
+            indexMapping.set(HeaderType.NAME, findColumn(indexRow, ["Player"]));
+            indexMapping.set(HeaderType.POSITION, findColumn(indexRow, ["Pos", "Position-Rank", "Position"]));
+            indexMapping.set(HeaderType.ADP, findColumn(indexRow, ["ADP", "ADP ( Average )"]));
+            indexMapping.set(HeaderType.TEAM, findColumn(indexRow, ["Team"]));
+            indexMapping.set(HeaderType.POINTS, findColumn(indexRow, ["FF Pts"]));
+            indexMapping.set(HeaderType.VOR, findColumn(indexRow, ["VOR"]));
+            indexMapping.set(HeaderType.RANK, findColumn(indexRow, ["Rank", "Overall Rank", "Overall"]));
             return indexMapping;
         }
 
         const getPlayer = (row: string[], headerIndex: Map<HeaderType, number>, idx: number): Player => {
 
-            function defaultIndex(): number {
-                return 0;
+            function resolveIndex(type: HeaderType): number {
+                const index = headerIndex.get(type);
+                return index === undefined || index === -1 ? 0 : index;
             }
 
-            let positionIndex: number = headerIndex.get(HeaderType.POSITION) || defaultIndex()
-            let position = row[positionIndex].substring(0, 2);
+            let positionIndex: number = resolveIndex(HeaderType.POSITION)
+            let position = (row[positionIndex] || "").substring(0, 2);
 
-            let nameIndex: number = headerIndex.get(HeaderType.NAME) || defaultIndex()
+            let nameIndex: number = resolveIndex(HeaderType.NAME)
             let name = row[nameIndex]
 
-            let adpIndex: number = headerIndex.get(HeaderType.ADP) || defaultIndex()
+            let adpIndex: number = resolveIndex(HeaderType.ADP)
             let adp = Math.round(Number(row[adpIndex]));
             if (!adp) {
                 adp = 999;// default
             }
 
-            let teamIndex: number = headerIndex.get(HeaderType.TEAM) || defaultIndex()
+            let teamIndex: number = resolveIndex(HeaderType.TEAM)
             let team = row[teamIndex]
 
-            let pointsIndex: number = headerIndex.get(HeaderType.POINTS) || defaultIndex()
+            let pointsIndex: number = resolveIndex(HeaderType.POINTS)
             let points: number = parseFloat(row[pointsIndex])
             let roundedPoints: number = parseFloat(points.toFixed(2))
+
+            let vorIndex: number = resolveIndex(HeaderType.VOR)
+            let vor: number = parseFloat(row[vorIndex])
+            let roundedVor: number = parseFloat((isNaN(vor) ? 0 : vor).toFixed(2))
+
+            let rankIndex: number = resolveIndex(HeaderType.RANK)
+            let rank = Math.round(Number(row[rankIndex]));
+            if (!rank) {
+                rank = 999;// default
+            }
 
             return {
                 id: idx,
@@ -74,6 +99,9 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
                 adp: adp,
                 team: team,
                 points: roundedPoints,
+                vor: roundedVor,
+                rank: rank,
+                positionRank: "",
                 relativeValue: 0,
                 age: 0,
                 tier: 1

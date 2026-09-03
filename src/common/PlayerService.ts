@@ -4,6 +4,8 @@ import draftConfig from "../config/DefaultConfig.json"
 
 export function updatePlayersRVandTier(basePlayers: Player[]) {
 
+    updatePositionRank(basePlayers);
+
     let pointsByPosition: Map<string, Player[]> = new Map<string, Player[]>();
     basePlayers.forEach(p => {
         let x = pointsByPosition.has(p.position) ? pointsByPosition.get(p.position)! : []
@@ -11,19 +13,12 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
         pointsByPosition.set(p.position, x);
     });
 
-    let qb: Player[] = pointsByPosition.get("QB")!;
-    let rb: Player[] = pointsByPosition.get("RB")!;
-    let wr: Player[] = pointsByPosition.get("WR")!;
-    let te: Player[] = pointsByPosition.get("TE")!;
-    let k: Player[] = pointsByPosition.get("K")!;
-    // let def: Player[] = pointsByPosition.get("DEF")!;
-
-    let qbPoint: number[] = qb.slice(0, 32).map((p: Player) => p.points);
-    let rbPoint: number[] = rb.slice(0, 64).map((p: Player) => p.points);
-    let wrPoint: number[] = wr.slice(0, 64).map((p: Player) => p.points);
-    let tePoint: number[] = te.slice(0, 32).map((p: Player) => p.points);
-    let kPoint: number[] = k.slice(0, 32).map((p: Player) => p.points);
-    // let defPoint: number[] = def.slice(0, 32).map((p: Player) => p.points);
+    let qb: Player[] = pointsByPosition.get("QB") || [];
+    let rb: Player[] = pointsByPosition.get("RB") || [];
+    let wr: Player[] = pointsByPosition.get("WR") || [];
+    let te: Player[] = pointsByPosition.get("TE") || [];
+    let k: Player[] = pointsByPosition.get("K") || [];
+    // let def: Player[] = pointsByPosition.get("DEF") || [];
 
     let qbCkValue = draftConfig.roster.starting.qb * draftConfig.teamCount;
     let rbCkValue = Math.round(draftConfig.roster.starting.rb * draftConfig.teamCount);
@@ -32,28 +27,47 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
     let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
     // let defCkValue = draftConfig.roster.starting.def * draftConfig.teamCount;
 
-    let qbTiers: number[][] = ckmeans(qbPoint, draftConfig.compute.tiers.qb);
-    let rbTiers: number[][] = ckmeans(rbPoint, draftConfig.compute.tiers.rb);
-    let wrTiers: number[][] = ckmeans(wrPoint, draftConfig.compute.tiers.wr);
-    let teTiers: number[][] = ckmeans(tePoint, draftConfig.compute.tiers.te);
-    let kTiers: number[][] = ckmeans(kPoint, draftConfig.compute.tiers.k);
-    // let defTiers: number[][] = ckmeans(defPoint, draftConfig.compute.tiers.def);
+    // update players tiers, skipping any position missing from the uploaded file
+    computeTierAndRv(qb, draftConfig.compute.tiers.qb, qbCkValue, 32);
+    computeTierAndRv(rb, draftConfig.compute.tiers.rb, rbCkValue, 64);
+    computeTierAndRv(wr, draftConfig.compute.tiers.wr, wrCkValue, 64);
+    computeTierAndRv(te, draftConfig.compute.tiers.te, teCkValue, 32);
+    computeTierAndRv(k, draftConfig.compute.tiers.k, kCkValue, 32);
+    // computeTierAndRv(def, draftConfig.compute.tiers.def, defCkValue, 32);
 
-    // update players tiers
-    updateTierAndRv(qb, qbTiers, qbCkValue);
-    updateTierAndRv(rb, rbTiers, rbCkValue);
-    updateTierAndRv(wr, wrTiers, wrCkValue);
-    updateTierAndRv(te, teTiers, teCkValue);
-    updateTierAndRv(k, kTiers, kCkValue);
-    // updateTierAndRv(def, defTiers, defCkValue);
+}
 
+export function updatePositionRank(players: Player[]) {
+    let playersByPosition: Map<string, Player[]> = new Map<string, Player[]>();
+    players.forEach(p => {
+        let x = playersByPosition.has(p.position) ? playersByPosition.get(p.position)! : []
+        x.push(p);
+        playersByPosition.set(p.position, x);
+    });
+
+    playersByPosition.forEach((positionPlayers, position) => {
+        [...positionPlayers]
+            .sort((a, b) => a.rank - b.rank)
+            .forEach((p, index) => {
+                p.positionRank = position + (index + 1);
+            });
+    });
+}
+
+function computeTierAndRv(players: Player[], tierCount: number, rvIndex: number, sliceSize: number) {
+    if (players.length === 0) {
+        return;
+    }
+    let points: number[] = players.slice(0, sliceSize).map((p: Player) => p.points);
+    let tiers: number[][] = ckmeans(points, Math.min(tierCount, points.length));
+    updateTierAndRv(players, tiers, rvIndex);
 }
 
 function updateTierAndRv(players: Player[], tiers: number[][], rvIndex: number) {
     let index = 0;
     let tier = 0;
 
-    let rvValue: number = players[rvIndex].points;
+    let rvValue: number = players[Math.min(rvIndex, players.length - 1)].points;
 
     for (let i = tiers.length - 1; i >= 0; i--) {
         tier++;

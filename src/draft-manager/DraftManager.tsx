@@ -44,31 +44,26 @@ function DraftLayout() {
             </Row>
             <Row>
                 <Col lg={4} md={12}>
-
-                    <Accordion defaultActiveKey="0" flush className={'my-2'}>
+                    <Accordion defaultActiveKey="0" flush className={'mb-2'}>
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Suggestions</Accordion.Header>
                             <Accordion.Body>
-                                <SuggestedPlayersInsight displayCount={draftConfig.display.suggestions.show}
-                                                         onSubmit={draftPlayers}/>
+                                <SuggestedPlayersInsight displayCount={draftConfig.display.suggestions.show}/>
                             </Accordion.Body>
                         </Accordion.Item>
-                    </Accordion>
-
-                    <Accordion defaultActiveKey="0" flush className={'mb-2'}>
-                        <Accordion.Item eventKey="0">
+                        <Accordion.Item eventKey="1">
                             <Accordion.Header>Teams</Accordion.Header>
                             <Accordion.Body>
                                 <DraftedTeams/>
                             </Accordion.Body>
                         </Accordion.Item>
-                        <Accordion.Item eventKey="1">
+                        <Accordion.Item eventKey="2">
                             <Accordion.Header>Picks</Accordion.Header>
                             <Accordion.Body>
                                 <SelectedPicks/>
                             </Accordion.Body>
                         </Accordion.Item>
-                        <Accordion.Item eventKey="2">
+                        <Accordion.Item eventKey="3">
                             <Accordion.Header>Trends</Accordion.Header>
                             <Accordion.Body>
                                 <TrendInsight/>

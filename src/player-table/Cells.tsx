@@ -1,13 +1,33 @@
 import {NflTeam, NflTeams, Player} from "../common/Player";
 import React from "react";
-import {Column} from "react-data-grid";
+import {Column, FormatterProps} from "react-data-grid";
+import Button from "react-bootstrap/Button";
+import {useDraftContext} from "../draft-manager/DraftContext";
 
 interface FilterRendererProps {
     value: string;
     onChange: (value: string) => void;
 }
 
+const DraftButtonFormatter = ({row}: FormatterProps<Player>) => {
+    const {draftPlayers} = useDraftContext();
+    return (
+        <Button size="sm" variant="success" onClick={() => draftPlayers([row])}>
+            Draft
+        </Button>
+    );
+};
+
 export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>>([
+    ["rank",
+        {
+            key: 'rank',
+            name: 'Rank',
+            width: 30,
+            frozen: true,
+            sortable: true
+        }
+    ],
     ["adp",
         {
             key: 'adp',
@@ -68,6 +88,27 @@ export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>
             cellClass: () => {
                 return "rv-filled"
             }
+        }
+    ],
+    ["vor",
+        {
+            key: 'vor',
+            name: 'VOR',
+            width: 30,
+            frozen: true,
+            sortable: true,
+            cellClass: () => {
+                return "vor-filled"
+            }
+        }
+    ],
+    ["position-rank",
+        {
+            key: 'positionRank',
+            name: 'Pos Rank',
+            width: 60,
+            frozen: true,
+            sortable: true
         }
     ],
     ["age",
@@ -132,7 +173,8 @@ export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>
             sortable: false,
             cellClass: () => {
                 return "draft-cell"
-            }
+            },
+            formatter: DraftButtonFormatter
         }
     ],
 ]);

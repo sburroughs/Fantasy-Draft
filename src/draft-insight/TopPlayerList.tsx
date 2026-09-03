@@ -4,8 +4,8 @@ import '../App.css';
 import {Button} from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 
-export function TopPlayerList(props: { players: Player[], keyId: string, onSubmit: (players: Player[]) => void }) {
-    const {players, onSubmit} = props;
+export function TopPlayerList(props: { players: Player[], keyId: string, onJump: (player: Player) => void }) {
+    const {players, onJump} = props;
 
     return <>
 
@@ -13,8 +13,8 @@ export function TopPlayerList(props: { players: Player[], keyId: string, onSubmi
             {players.length === 0 && <ListGroup.Item>Empty</ListGroup.Item>}
             {players.map((p) =>
                 <ListGroup.Item key={p.id}>
-                    <Button className={"float-right"} onClick={() => onSubmit([p])}>
-                        Draft
+                    <Button className={"float-right"} onClick={() => onJump(p)}>
+                        Jump to Player
                     </Button>
                     <p className={"m-0 p-0"}>{p.position} {p.name}</p>
                     <small>adp: {p.adp} | tier: {p.tier} | pts: {p.points} | rv: {p.relativeValue}</small>

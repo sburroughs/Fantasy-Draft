@@ -46,6 +46,8 @@ const loadState = (): DraftState => {
 
 export function useDraft() {
     const [state, setState] = useState<DraftState>(loadState);
+    const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
+    const [jumpToPlayerId, setJumpToPlayerId] = useState<number | null>(null);
 
     useEffect(() => {
         localStorage.setItem('draft', JSON.stringify(state, undefined, 4));
@@ -120,6 +122,15 @@ export function useDraft() {
         });
     }, []);
 
+    const selectPlayer = useCallback((player: Player | null) => {
+        setSelectedPlayerId(player ? player.id : null);
+    }, []);
+
+    const jumpToPlayer = useCallback((player: Player) => {
+        setSelectedPlayerId(player.id);
+        setJumpToPlayerId(player.id);
+    }, []);
+
     const targetPlayers = useCallback((players: Player[]) => {
         setState(prev => {
             const newPlayers = players.filter(
@@ -166,10 +177,14 @@ export function useDraft() {
 
     return {
         ...state,
+        selectedPlayerId,
+        jumpToPlayerId,
         addPlayer,
         clearPlayers,
         setAvailablePlayers,
         draftPlayers,
+        selectPlayer,
+        jumpToPlayer,
         targetPlayers,
         undoDraftPicks
     };

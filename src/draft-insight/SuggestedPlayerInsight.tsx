@@ -6,11 +6,10 @@ import {useDraftContext} from "../draft-manager/DraftContext";
 
 interface Props {
     displayCount: number
-    onSubmit: (players: Player[]) => void
 }
 
-const SuggestedPlayersInsight = ({displayCount, onSubmit}: Props) => {
-    const {availablePlayers, targetedPlayers, draftStatus, teams} = useDraftContext();
+const SuggestedPlayersInsight = ({displayCount}: Props) => {
+    const {availablePlayers, targetedPlayers, draftStatus, teams, jumpToPlayer} = useDraftContext();
     const [key, setKey] = useState("best");
 
     const players = [...availablePlayers];
@@ -59,25 +58,25 @@ const SuggestedPlayersInsight = ({displayCount, onSubmit}: Props) => {
             // @ts-ignore
               onSelect={(k) => setKey(k)}>
             <Tab eventKey="adp" title="ADP">
-                <TopPlayerList players={getADP(displayCount)} keyId={"adp"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getADP(displayCount)} keyId={"adp"} onJump={jumpToPlayer}/>
             </Tab>
             <Tab eventKey="best" title="BEST">
-                <TopPlayerList players={getBestAvailable(currentTeam, displayCount)} keyId={"best"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getBestAvailable(currentTeam, displayCount)} keyId={"best"} onJump={jumpToPlayer}/>
             </Tab>
             <Tab eventKey="qb" title="QB">
-                <TopPlayerList players={getByPosition("QB", displayCount)} keyId={"qb"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getByPosition("QB", displayCount)} keyId={"qb"} onJump={jumpToPlayer}/>
             </Tab>
             <Tab eventKey="rb" title="RB">
-                <TopPlayerList players={getByPosition("RB", displayCount)} keyId={"rb"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getByPosition("RB", displayCount)} keyId={"rb"} onJump={jumpToPlayer}/>
             </Tab>
             <Tab eventKey="wr" title="WR">
-                <TopPlayerList players={getByPosition("WR", displayCount)} keyId={"wr"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getByPosition("WR", displayCount)} keyId={"wr"} onJump={jumpToPlayer}/>
             </Tab>
             <Tab eventKey="te" title="TE">
-                <TopPlayerList players={getByPosition("TE", displayCount)} keyId={"te"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getByPosition("TE", displayCount)} keyId={"te"} onJump={jumpToPlayer}/>
             </Tab>
             <Tab eventKey="targets" title="★">
-                <TopPlayerList players={getBestTargets(displayCount)} keyId={"targets"} onSubmit={onSubmit}/>
+                <TopPlayerList players={getBestTargets(displayCount)} keyId={"targets"} onJump={jumpToPlayer}/>
             </Tab>
         </Tabs>
     );

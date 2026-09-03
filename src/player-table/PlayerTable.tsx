@@ -1,8 +1,9 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {AutoSizer} from 'react-virtualized';
 import {ContextMenu, ContextMenuTrigger, MenuItem} from 'react-contextmenu';
 import DataGrid, {
     Column,
+    DataGridHandle,
     Filters,
     Row as DataGridRow,
     RowRendererProps,
@@ -44,27 +45,41 @@ function getPicksSnake(totalTeams: number, draftPosition: number, totalRounds: n
     return myPicks;
 }
 
-const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[]) => {
-    const getRowBackgroundClass = () => {
-        const v = props.row.relativeValue;
-        const thresholds: Record<string, string> = config.display["player-board"]["gradient-thresholds"]["rv"];
+const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[], selectedPlayerId: number | null, currentPick: number) => {
+    const getGradientClass = (value: number, thresholdKey: string) => {
+        const allThresholds: Record<string, Record<string, string>> = config.display["player-board"]["gradient-thresholds"];
+        const thresholds: Record<string, string> = allThresholds[thresholdKey];
         let tier = '0';
         for (let i = 1; i < 10; i++) {
             const key = i.toString();
-            if (v > Number(thresholds[key])) {
+            if (value > Number(thresholds[key])) {
                 tier = key;
                 break;
             }
         }
-        return "rv-" + tier;
+        return thresholdKey + "-" + tier;
+    };
+
+    const getAdpClass = () => {
+        const picksFromAdp = currentPick - props.row.adp;
+        if (picksFromAdp <= -2 * config.teamCount) {
+            return "adp-reach"; // current pick is 2+ rounds earlier than this player's ADP
+        }
+        if (picksFromAdp >= 0.5 * config.teamCount) {
+            return "adp-value"; // this player has fallen half a round or more past their ADP
+        }
+        return "";
     };
 
     const gridStyles = () => [
-        getRowBackgroundClass(),
+        getGradientClass(props.row.relativeValue, "rv"),
+        getGradientClass(props.row.vor, "vor"),
         "tier-" + props.row.tier,
         "position-" + props.row.position.toLowerCase(),
         picksInDraft.has(props.row.adp) ? "projected-pick" : "",
         targetedPlayers.some(player => player.id === props.row.id) ? "targeted-pick" : "",
+        selectedPlayerId === props.row.id ? "selected-player" : "",
+        getAdpClass(),
     ].join(" ");
 
     return (
@@ -77,9 +92,21 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[])
 }
 
 function PlayerTable() {
-    const {availablePlayers, targetedPlayers, draftPlayers, targetPlayers, setAvailablePlayers} = useDraftContext();
+    const {
+        availablePlayers,
+        targetedPlayers,
+        draftPlayers,
+        targetPlayers,
+        setAvailablePlayers,
+        selectedPlayerId,
+        jumpToPlayerId,
+        selectPlayer,
+        draftStatus
+    } = useDraftContext();
 
-    const [[sortColumn, sortDirection], setSort] = useState<[string, SortDirection]>(['adp', 'ASC']);
+    const gridRef = useRef<DataGridHandle>(null);
+
+    const [[sortColumn, sortDirection], setSort] = useState<[string, SortDirection]>(['rank', 'ASC']);
     const [selectedRows, setSelectedRows] = useState(() => new Set<number>());
     const [filters, setFilters] = useState<Filters>({
         position: 'All',
@@ -99,12 +126,15 @@ function PlayerTable() {
         let sortedPlayers = [...filteredPlayers];
         switch (sortColumn) {
             case 'name':
+            case 'positionRank':
                 sortedPlayers = sortedPlayers.sort((a, b) => a[sortColumn].localeCompare(b[sortColumn]));
                 break;
             case 'id':
             case 'adp':
             case 'age':
             case 'tier':
+            case 'vor':
+            case 'rank':
             case 'relativeValue':
                 sortedPlayers = sortedPlayers.sort((a, b) => a[sortColumn] - b[sortColumn]);
                 break;
@@ -133,11 +163,30 @@ function PlayerTable() {
         targetPlayers([playerSubset[rowIdx]]);
     }
 
+    const handleRowClick = useCallback((rowIdx: number, row: Player) => {
+        selectPlayer(row);
+    }, [selectPlayer]);
+
+    useEffect(() => {
+        if (jumpToPlayerId != null) {
+            setFilters({position: 'All', team: 'All', name: ''});
+        }
+    }, [jumpToPlayerId]);
+
+    useEffect(() => {
+        if (jumpToPlayerId == null) return;
+        const rowIdx = playerSubset.findIndex(p => p.id === jumpToPlayerId);
+        if (rowIdx !== -1) {
+            gridRef.current?.scrollToRow(rowIdx);
+        }
+    }, [jumpToPlayerId, playerSubset]);
+
     return (
         <div style={{flex: '1 1 auto', minHeight: '88vh'}}>
             <AutoSizer>
                 {({height, width}) => (
                     <DataGrid
+                        ref={gridRef}
                         rowKey="id"
                         columns={columns}
                         rows={playerSubset}
@@ -152,7 +201,8 @@ function PlayerTable() {
                         enableFilters={true}
                         filters={filters}
                         onFiltersChange={setFilters}
-                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers)}
+                        onRowClick={handleRowClick}
+                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers, selectedPlayerId, draftStatus.currentPick)}
                     />
                 )}
             </AutoSizer>
