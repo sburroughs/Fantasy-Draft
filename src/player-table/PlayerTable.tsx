@@ -45,7 +45,7 @@ function getPicksSnake(totalTeams: number, draftPosition: number, totalRounds: n
     return myPicks;
 }
 
-const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[], selectedPlayerId: number | null, currentPick: number) => {
+const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[], selectedPlayerId: number | null, currentPick: number, projectedPickByPlayerId: Map<number, number>) => {
     const getGradientClass = (value: number, thresholdKey: string) => {
         const allThresholds: Record<string, Record<string, string>> = config.display["player-board"]["gradient-thresholds"];
         const thresholds: Record<string, string> = allThresholds[thresholdKey];
@@ -60,13 +60,13 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[],
         return thresholdKey + "-" + tier;
     };
 
-    const getAdpClass = () => {
-        const picksFromAdp = currentPick - props.row.adp;
+    const getAdpClass = (adpValue: number, suffix: string) => {
+        const picksFromAdp = currentPick - adpValue;
         if (picksFromAdp <= -2 * config.teamCount) {
-            return "adp-reach"; // current pick is 2+ rounds earlier than this player's ADP
+            return "adp-reach" + suffix; // current pick is 2+ rounds earlier than this player's ADP
         }
         if (picksFromAdp >= 0.5 * config.teamCount) {
-            return "adp-value"; // this player has fallen half a round or more past their ADP
+            return "adp-value" + suffix; // this player has fallen half a round or more past their ADP
         }
         return "";
     };
@@ -76,10 +76,14 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[],
         getGradientClass(props.row.vor, "vor"),
         "tier-" + props.row.tier,
         "position-" + props.row.position.toLowerCase(),
-        picksInDraft.has(props.row.adp) ? "projected-pick" : "",
+        picksInDraft.has(projectedPickByPlayerId.get(props.row.id) ?? -1) ? "projected-pick" : "",
         targetedPlayers.some(player => player.id === props.row.id) ? "targeted-pick" : "",
         selectedPlayerId === props.row.id ? "selected-player" : "",
-        getAdpClass(),
+        getAdpClass(props.row.adp, ""),
+        getAdpClass(props.row.adpEspn, "-espn"),
+        getAdpClass(props.row.adpSleeper, "-sleeper"),
+        getAdpClass(props.row.adpUnderdog, "-underdog"),
+        getAdpClass(props.row.adpFantrax, "-fantrax"),
     ].join(" ");
 
     return (
@@ -131,6 +135,10 @@ function PlayerTable() {
                 break;
             case 'id':
             case 'adp':
+            case 'adpEspn':
+            case 'adpSleeper':
+            case 'adpUnderdog':
+            case 'adpFantrax':
             case 'age':
             case 'tier':
             case 'vor':
@@ -141,6 +149,16 @@ function PlayerTable() {
         }
         return sortDirection === 'DESC' ? sortedPlayers.reverse() : sortedPlayers;
     }, [availablePlayers, sortDirection, sortColumn, filters]);
+
+    // assumes remaining players go off the board in rank order from here on, so as players
+    // are drafted the projected pick for each remaining player slides up to fill the gap.
+    const projectedPickByPlayerId: Map<number, number> = useMemo(() => {
+        const map = new Map<number, number>();
+        [...availablePlayers]
+            .sort((a, b) => a.rank - b.rank)
+            .forEach((p, idx) => map.set(p.id, draftStatus.currentPick + idx));
+        return map;
+    }, [availablePlayers, draftStatus.currentPick]);
 
     const handleRowsUpdate = useCallback(({fromRow, toRow, updated}: RowsUpdateEvent<Partial<Player>>) => {
         const newRows = [...playerSubset];
@@ -202,7 +220,7 @@ function PlayerTable() {
                         filters={filters}
                         onFiltersChange={setFilters}
                         onRowClick={handleRowClick}
-                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers, selectedPlayerId, draftStatus.currentPick)}
+                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers, selectedPlayerId, draftStatus.currentPick, projectedPickByPlayerId)}
                     />
                 )}
             </AutoSizer>

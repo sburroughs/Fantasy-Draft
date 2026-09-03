@@ -28,6 +28,10 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
             NAME = "NAME",
             POSITION = "POSITION",
             ADP = "ADP",
+            ADP_ESPN = "ADP_ESPN",
+            ADP_SLEEPER = "ADP_SLEEPER",
+            ADP_UNDERDOG = "ADP_UNDERDOG",
+            ADP_FANTRAX = "ADP_FANTRAX",
             TEAM = "TEAM",
             POINTS = "POINTS",
             VOR = "VOR",
@@ -49,6 +53,10 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
             indexMapping.set(HeaderType.NAME, findColumn(indexRow, ["Player"]));
             indexMapping.set(HeaderType.POSITION, findColumn(indexRow, ["Pos", "Position-Rank", "Position"]));
             indexMapping.set(HeaderType.ADP, findColumn(indexRow, ["ADP", "ADP ( Average )"]));
+            indexMapping.set(HeaderType.ADP_ESPN, findColumn(indexRow, ["ADP (ESPN)"]));
+            indexMapping.set(HeaderType.ADP_SLEEPER, findColumn(indexRow, ["ADP (Sleeper)"]));
+            indexMapping.set(HeaderType.ADP_UNDERDOG, findColumn(indexRow, ["ADP (Underdog)"]));
+            indexMapping.set(HeaderType.ADP_FANTRAX, findColumn(indexRow, ["ADP (Fantrax)"]));
             indexMapping.set(HeaderType.TEAM, findColumn(indexRow, ["Team"]));
             indexMapping.set(HeaderType.POINTS, findColumn(indexRow, ["FF Pts"]));
             indexMapping.set(HeaderType.VOR, findColumn(indexRow, ["VOR"]));
@@ -75,6 +83,20 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
                 adp = 999;// default
             }
 
+            function resolveAdp(type: HeaderType): number {
+                const index = headerIndex.get(type);
+                if (index === undefined || index === -1) {
+                    return 999;
+                }
+                const value = Math.round(Number(row[index]));
+                return value ? value : 999;
+            }
+
+            let adpEspn = resolveAdp(HeaderType.ADP_ESPN);
+            let adpSleeper = resolveAdp(HeaderType.ADP_SLEEPER);
+            let adpUnderdog = resolveAdp(HeaderType.ADP_UNDERDOG);
+            let adpFantrax = resolveAdp(HeaderType.ADP_FANTRAX);
+
             let teamIndex: number = resolveIndex(HeaderType.TEAM)
             let team = row[teamIndex]
 
@@ -97,6 +119,10 @@ export const PlayerUpload = (props: {onChangeValue: (players: Player[]) => void}
                 name: name,
                 position: position,
                 adp: adp,
+                adpEspn: adpEspn,
+                adpSleeper: adpSleeper,
+                adpUnderdog: adpUnderdog,
+                adpFantrax: adpFantrax,
                 team: team,
                 points: roundedPoints,
                 vor: roundedVor,

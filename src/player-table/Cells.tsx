@@ -40,6 +40,54 @@ export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>
             }
         }
     ],
+    ["adp-espn",
+        {
+            key: 'adpEspn',
+            name: 'ESPN',
+            width: 30,
+            frozen: true,
+            sortable: true,
+            cellClass: () => {
+                return "cell-adp-espn"
+            }
+        }
+    ],
+    ["adp-sleeper",
+        {
+            key: 'adpSleeper',
+            name: 'Sleeper',
+            width: 30,
+            frozen: true,
+            sortable: true,
+            cellClass: () => {
+                return "cell-adp-sleeper"
+            }
+        }
+    ],
+    ["adp-underdog",
+        {
+            key: 'adpUnderdog',
+            name: 'Undrdg',
+            width: 30,
+            frozen: true,
+            sortable: true,
+            cellClass: () => {
+                return "cell-adp-underdog"
+            }
+        }
+    ],
+    ["adp-fantrax",
+        {
+            key: 'adpFantrax',
+            name: 'Fntrx',
+            width: 30,
+            frozen: true,
+            sortable: true,
+            cellClass: () => {
+                return "cell-adp-fantrax"
+            }
+        }
+    ],
     ["tier",
         {
             key: 'tier',

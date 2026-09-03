@@ -1,6 +1,10 @@
 export interface Player {
     id: number
     adp: number
+    adpEspn: number
+    adpSleeper: number
+    adpUnderdog: number
+    adpFantrax: number
     name: string
     position: string
     team: string
