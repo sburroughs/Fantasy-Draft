@@ -80,10 +80,6 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[],
         targetedPlayers.some(player => player.id === props.row.id) ? "targeted-pick" : "",
         selectedPlayerId === props.row.id ? "selected-player" : "",
         getAdpClass(props.row.adp, ""),
-        getAdpClass(props.row.adpEspn, "-espn"),
-        getAdpClass(props.row.adpSleeper, "-sleeper"),
-        getAdpClass(props.row.adpUnderdog, "-underdog"),
-        getAdpClass(props.row.adpFantrax, "-fantrax"),
     ].join(" ");
 
     return (
@@ -135,12 +131,9 @@ function PlayerTable() {
                 break;
             case 'id':
             case 'adp':
-            case 'adpEspn':
-            case 'adpSleeper':
-            case 'adpUnderdog':
-            case 'adpFantrax':
             case 'age':
             case 'tier':
+            case 'points':
             case 'vor':
             case 'rank':
             case 'relativeValue':

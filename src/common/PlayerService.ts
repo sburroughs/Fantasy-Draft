@@ -58,9 +58,10 @@ function computeTierAndRv(players: Player[], tierCount: number, rvIndex: number,
     if (players.length === 0) {
         return;
     }
-    let points: number[] = players.slice(0, sliceSize).map((p: Player) => p.points);
+    let sortedByPoints: Player[] = [...players].sort((a, b) => b.points - a.points);
+    let points: number[] = sortedByPoints.slice(0, sliceSize).map((p: Player) => p.points);
     let tiers: number[][] = ckmeans(points, Math.min(tierCount, points.length));
-    updateTierAndRv(players, tiers, rvIndex);
+    updateTierAndRv(sortedByPoints, tiers, rvIndex);
 }
 
 function updateTierAndRv(players: Player[], tiers: number[][], rvIndex: number) {

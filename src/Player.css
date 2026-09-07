@@ -48,6 +48,20 @@ h2.panel {
     line-height: 22px;
 }
 
+.adp-cell-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+}
+
+.notes-icon-button {
+    padding: 0 4px;
+    line-height: 20px;
+    font-size: 12px;
+}
+
 .projected-pick .draft-cell{
     background-color: mediumpurple;
 }
@@ -56,21 +70,13 @@ h2.panel {
     background-color: gold;
 }
 
-/*adp vs current pick extremes (each adp source highlights independently)*/
-.adp-reach .cell-adp,
-.adp-reach-espn .cell-adp-espn,
-.adp-reach-sleeper .cell-adp-sleeper,
-.adp-reach-underdog .cell-adp-underdog,
-.adp-reach-fantrax .cell-adp-fantrax {
+/*adp vs current pick extremes*/
+.adp-reach .cell-adp {
     background-color: rgba(255, 0, 0, 0.6);
     color: white;
 }
 
-.adp-value .cell-adp,
-.adp-value-espn .cell-adp-espn,
-.adp-value-sleeper .cell-adp-sleeper,
-.adp-value-underdog .cell-adp-underdog,
-.adp-value-fantrax .cell-adp-fantrax {
+.adp-value .cell-adp {
     background-color: rgba(0, 128, 0, 0.6);
     color: white;
 }

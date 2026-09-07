@@ -2,6 +2,8 @@ import {NflTeam, NflTeams, Player} from "../common/Player";
 import React from "react";
 import {Column, FormatterProps} from "react-data-grid";
 import Button from "react-bootstrap/Button";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 import {useDraftContext} from "../draft-manager/DraftContext";
 
 interface FilterRendererProps {
@@ -15,6 +17,30 @@ const DraftButtonFormatter = ({row}: FormatterProps<Player>) => {
         <Button size="sm" variant="success" onClick={() => draftPlayers([row])}>
             Draft
         </Button>
+    );
+};
+
+const AdpFormatter = ({row}: FormatterProps<Player>) => {
+    const popover = (
+        <Popover id={`notes-popover-${row.id}`}>
+            <Popover.Header as="h3">{row.name} — ADP by Source</Popover.Header>
+            <Popover.Body>
+                <div>ESPN: {row.adpEspn}</div>
+                <div>Sleeper: {row.adpSleeper}</div>
+                <div>Underdog: {row.adpUnderdog}</div>
+                <div>Fantrax: {row.adpFantrax}</div>
+            </Popover.Body>
+        </Popover>
+    );
+    return (
+        <span className="adp-cell-content">
+            <span className="adp-value">{row.adp}</span>
+            <OverlayTrigger trigger="click" placement="right" overlay={popover} rootClose>
+                <Button size="sm" variant="outline-secondary" className="notes-icon-button">
+                    📝
+                </Button>
+            </OverlayTrigger>
+        </span>
     );
 };
 
@@ -32,60 +58,13 @@ export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>
         {
             key: 'adp',
             name: 'ADP',
-            width: 30,
+            width: 70,
             frozen: true,
             sortable: true,
             cellClass: () => {
                 return "cell-adp"
-            }
-        }
-    ],
-    ["adp-espn",
-        {
-            key: 'adpEspn',
-            name: 'ESPN',
-            width: 30,
-            frozen: true,
-            sortable: true,
-            cellClass: () => {
-                return "cell-adp-espn"
-            }
-        }
-    ],
-    ["adp-sleeper",
-        {
-            key: 'adpSleeper',
-            name: 'Sleeper',
-            width: 30,
-            frozen: true,
-            sortable: true,
-            cellClass: () => {
-                return "cell-adp-sleeper"
-            }
-        }
-    ],
-    ["adp-underdog",
-        {
-            key: 'adpUnderdog',
-            name: 'Undrdg',
-            width: 30,
-            frozen: true,
-            sortable: true,
-            cellClass: () => {
-                return "cell-adp-underdog"
-            }
-        }
-    ],
-    ["adp-fantrax",
-        {
-            key: 'adpFantrax',
-            name: 'Fntrx',
-            width: 30,
-            frozen: true,
-            sortable: true,
-            cellClass: () => {
-                return "cell-adp-fantrax"
-            }
+            },
+            formatter: AdpFormatter
         }
     ],
     ["tier",
