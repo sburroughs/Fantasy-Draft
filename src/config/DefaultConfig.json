@@ -1,7 +1,21 @@
 {
   "teamCount": 12,
-  "draftPosition": 11,
+  "draftPosition": 10,
   "draftRounds": 15,
+  "teamNames": [
+    "msam1017",
+    "ClaptianCheeks",
+    "jaqu7",
+    "pinner12",
+    "BillyHo182",
+    "FrenchRevolution",
+    "AdamBombs17",
+    "lockedpockets",
+    "weedjesus420",
+    "Dongertron",
+    "Cooliopops",
+    "Ttwo."
+  ],
   "roster": {
     "size": 15,
     "starting": {
@@ -32,9 +46,20 @@
       "def": 10
     }
   },
+  "auction": {
+    "totalBudget": 200,
+    "positionBudgets": {
+      "qb": 20,
+      "rb": 75,
+      "wr": 90,
+      "te": 15,
+      "k": 0,
+      "def": 0
+    }
+  },
   "display": {
     "suggestions": {
-      "show": 5
+      "show": 10
     },
     "player-board": {
       "show-column": [
@@ -47,6 +72,8 @@
         "points",
         "vor",
         "rv",
+        "auction-value",
+        "bye",
         "position",
         "team"
       ],
@@ -72,6 +99,46 @@
           "7": "-40",
           "8": "-60",
           "9": "-80"
+        }
+      }
+    },
+    "player-board-auction": {
+      "show-column": [
+        "draft-player",
+        "rank",
+        "name",
+        "position-rank",
+        "auction-value",
+        "tier",
+        "bye",
+        "rv",
+        "adp",
+        "points",
+        "position",
+        "team"
+      ],
+      "gradient-thresholds": {
+        "rv": {
+          "1": "40",
+          "2": "30",
+          "3": "20",
+          "4": "10",
+          "5": "0",
+          "6": "-2",
+          "7": "-4",
+          "8": "-6",
+          "9": "-8"
+        },
+        "vor": {
+          "1": "40",
+          "2": "30",
+          "3": "20",
+          "4": "10",
+          "5": "0",
+          "6": "-2",
+          "7": "-4",
+          "8": "-6",
+          "9": "-8"
         }
       }
     }

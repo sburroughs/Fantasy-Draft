@@ -20,7 +20,7 @@ import {createPortal} from "react-dom";
 import {Cells} from "./Cells";
 import {useDraftContext} from "../draft-manager/DraftContext";
 
-const columns: readonly Column<Player>[] = config.display["player-board"]["show-column"]
+const buildColumns = (fieldNames: string[]): readonly Column<Player>[] => fieldNames
     .filter((fieldName: string) => {
         if (!Cells.has(fieldName)) {
             console.warn(`Field "${fieldName}" is not defined in Cells. Please check your configuration.`);
@@ -28,6 +28,9 @@ const columns: readonly Column<Player>[] = config.display["player-board"]["show-
         return Cells.has(fieldName);
     })
     .map(fieldName => Cells.get(fieldName)!);
+
+const snakeColumns: readonly Column<Player>[] = buildColumns(config.display["player-board"]["show-column"]);
+const auctionColumns: readonly Column<Player>[] = buildColumns(config.display["player-board-auction"]["show-column"]);
 
 const picksInDraft = new Set(getPicksSnake(config.teamCount, config.draftPosition, config.draftRounds));
 
@@ -45,7 +48,7 @@ function getPicksSnake(totalTeams: number, draftPosition: number, totalRounds: n
     return myPicks;
 }
 
-const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[], selectedPlayerId: number | null, currentPick: number, projectedPickByPlayerId: Map<number, number>) => {
+const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[], selectedPlayerId: number | null, currentPick: number, projectedPickByPlayerId: Map<number, number>, format: string) => {
     const getGradientClass = (value: number, thresholdKey: string) => {
         const allThresholds: Record<string, Record<string, string>> = config.display["player-board"]["gradient-thresholds"];
         const thresholds: Record<string, string> = allThresholds[thresholdKey];
@@ -76,10 +79,10 @@ const RowRenderer = (props: RowRendererProps<Player>, targetedPlayers: Player[],
         getGradientClass(props.row.vor, "vor"),
         "tier-" + props.row.tier,
         "position-" + props.row.position.toLowerCase(),
-        picksInDraft.has(projectedPickByPlayerId.get(props.row.id) ?? -1) ? "projected-pick" : "",
+        format === "snake" && picksInDraft.has(projectedPickByPlayerId.get(props.row.id) ?? -1) ? "projected-pick" : "",
         targetedPlayers.some(player => player.id === props.row.id) ? "targeted-pick" : "",
         selectedPlayerId === props.row.id ? "selected-player" : "",
-        getAdpClass(props.row.adp, ""),
+        format === "snake" ? getAdpClass(props.row.adp, "") : "",
     ].join(" ");
 
     return (
@@ -101,8 +104,12 @@ function PlayerTable() {
         selectedPlayerId,
         jumpToPlayerId,
         selectPlayer,
-        draftStatus
+        draftStatus,
+        format,
+        nominatePlayer
     } = useDraftContext();
+
+    const columns = format === "auction" ? auctionColumns : snakeColumns;
 
     const gridRef = useRef<DataGridHandle>(null);
 
@@ -137,6 +144,8 @@ function PlayerTable() {
             case 'vor':
             case 'rank':
             case 'relativeValue':
+            case 'auctionValue':
+            case 'bye':
                 sortedPlayers = sortedPlayers.sort((a, b) => a[sortColumn] - b[sortColumn]);
                 break;
         }
@@ -166,6 +175,10 @@ function PlayerTable() {
     }, []);
 
     const onPlayerDraft = (e: React.MouseEvent<HTMLDivElement>, {rowIdx}: { rowIdx: number }) => {
+        if (format === 'auction') {
+            nominatePlayer(playerSubset[rowIdx]);
+            return;
+        }
         draftPlayers([playerSubset[rowIdx]]);
         setFilters({position: 'All', team: 'All', name: ''});
     }
@@ -213,7 +226,7 @@ function PlayerTable() {
                         filters={filters}
                         onFiltersChange={setFilters}
                         onRowClick={handleRowClick}
-                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers, selectedPlayerId, draftStatus.currentPick, projectedPickByPlayerId)}
+                        rowRenderer={(rrp) => RowRenderer(rrp, targetedPlayers, selectedPlayerId, draftStatus.currentPick, projectedPickByPlayerId, format)}
                     />
                 )}
             </AutoSizer>

@@ -1,38 +1,48 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import Accordion from "react-bootstrap/Accordion"
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import draftConfig from '../config/DefaultConfig.json';
 import '../Player.css'
 import {DraftProvider, useDraftContext} from "./DraftContext";
 import PlayerTable from "../player-table/PlayerTable";
 import {PlayerUpload} from "../config/PlayerUpload";
+import {AuctionPlayerUpload} from "../config/AuctionPlayerUpload";
+import {MergePlayerData, MergeStatus} from "../config/MergePlayerData";
 import DraftedTeams from "../draft-insight/DraftedTeams";
 import SuggestedPlayersInsight from "../draft-insight/SuggestedPlayerInsight";
 import AddPlayerModal from "../config/AddPlayerModal";
 import SelectedPicks from "../draft-insight/SelectedPicks";
 import TrendInsight from "../draft-insight/TrendInsight";
-import ConfirmationModal from "../config/ConfirmationModal";
 import DraftStatusInsight from "../draft-insight/DraftStatus";
+import DraftSettingsModal from "../config/DraftSettingsModal";
+import AuctionDraftModal from "../config/AuctionDraftModal";
 
 interface Props {
     defaultTeamCount: number
 }
 
 function DraftLayout() {
-    const {addPlayer, clearPlayers, setAvailablePlayers, draftPlayers, undoDraftPicks} = useDraftContext();
+    const {addPlayer, uploadAvailablePlayers, draftPlayers, undoDraftPicks, format, hasUploaded, hasMerged} = useDraftContext();
+    const [mergeStatus, setMergeStatus] = useState<MergeStatus | null>(null);
+
+    useEffect(() => {
+        if (!hasMerged) setMergeStatus(null);
+    }, [hasMerged]);
 
     return (
         <Container fluid>
             <Row>
                 <Col lg={4} md={12}>
+                    <DraftSettingsModal/>
+                    {!hasUploaded &&
                     <Button id={"players-upload-parent"}>
-                        <PlayerUpload onChangeValue={setAvailablePlayers}/>
-                    </Button>
-                    <ConfirmationModal buttonText={"Restart Draft"}
-                                       onConfirm={() => undoDraftPicks(1000)}/>
-                    <ConfirmationModal buttonText={"Clear Players"}
-                                       onConfirm={clearPlayers}/>
+                        {format === "auction" ?
+                        <AuctionPlayerUpload onChangeValue={uploadAvailablePlayers}/> :
+                        <PlayerUpload onChangeValue={uploadAvailablePlayers}/>}
+                    </Button>}
+                    {!hasMerged && <MergePlayerData onStatus={setMergeStatus}/>}
                     <Button onClick={() => undoDraftPicks(1)}>
                         Undo Pick
                     </Button>
@@ -42,6 +52,18 @@ function DraftLayout() {
                     <DraftStatusInsight playerTeam={draftConfig.draftPosition}/>
                 </Col>
             </Row>
+            {mergeStatus &&
+            <Row>
+                <Col lg={12}>
+                    <Alert variant={mergeStatus.unmatched > 0 ? "warning" : "success"}
+                           onClose={() => setMergeStatus(null)} dismissible className={"mt-2 mb-0"}>
+                        <strong>Player data merged:</strong> {mergeStatus.matched} player{mergeStatus.matched === 1 ? '' : 's'} updated
+                        {mergeStatus.unmatched > 0 &&
+                        <> — {mergeStatus.unmatched} row{mergeStatus.unmatched === 1 ? '' : 's'} from the file couldn't be matched to a player</>}.
+                    </Alert>
+                </Col>
+            </Row>}
+            {format === "auction" && <AuctionDraftModal/>}
             <Row>
                 <Col lg={4} md={12}>
                     <Accordion defaultActiveKey="0" flush className={'mb-2'}>

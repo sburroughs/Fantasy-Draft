@@ -1,11 +1,39 @@
 import React, {useEffect, useState} from "react";
 import {Tab, Tabs} from 'react-bootstrap'
-import {Player, Team} from "../common/Player";
+import {AuctionSettings, Player, Team} from "../common/Player";
 import ListGroup from "react-bootstrap/ListGroup";
 import draftConfig from "../config/DefaultConfig.json";
 import {useDraftContext} from "../draft-manager/DraftContext";
+import * as AuctionCalculator from "../common/AuctionCalculator";
 
 type DraftConfig = typeof draftConfig;
+
+const AuctionTeamSummary = ({team, auctionSettings}: { team: Team, auctionSettings: AuctionSettings }) => {
+    const positions: { key: keyof AuctionSettings["positionBudgets"], label: string }[] = [
+        {key: "qb", label: "QB"},
+        {key: "rb", label: "RB"},
+        {key: "wr", label: "WR"},
+        {key: "te", label: "TE"}
+    ];
+
+    return <div className={"flex-parent"}>
+        <div>
+            <p className={team.budget <= 0 ? 'bg-danger' : 'bg-success'}>
+                Budget: ${team.budget} / ${auctionSettings.totalBudget}</p>
+        </div>
+        {positions.map(({key, label}) => {
+            const spent = AuctionCalculator.positionSpend(team, label);
+            const cap = auctionSettings.positionBudgets[key];
+            const count = team.players.filter(p => p.position === label).length;
+            return (
+                <div key={key}>
+                    <p className={spent > cap ? 'bg-danger' : 'bg-success'}>
+                        {label}: {count} - ${spent} / ${cap}</p>
+                </div>
+            );
+        })}
+    </div>
+}
 
 const TeamSummary = ({players, config}: { players: Player[], config: DraftConfig }) => {
     const qb = players.filter(p => p.position === "QB");
@@ -43,16 +71,16 @@ const TeamSummary = ({players, config}: { players: Player[], config: DraftConfig
 }
 
 function DraftedTeams() {
-    const {teams, draftStatus} = useDraftContext();
+    const {teams, draftStatus, format, auctionSettings} = useDraftContext();
     const [key, setKey] = useState("0");
 
     useEffect(() => {
         setKey((draftStatus.currentTeam - 1).toString());
     }, [draftStatus.currentTeam]);
 
-    const title = (idx: number, currentPick: number, yourTeam: number) => {
+    const title = (team: Team, idx: number, currentPick: number, yourTeam: number) => {
         let k = idx + 1;
-        let v = (yourTeam === k ? "@" : "") + k.toString();
+        let v = (yourTeam === k ? "@" : "") + team.name;
         v = v + (currentPick === k ? "*" : "");
         return v;
     }
@@ -61,15 +89,21 @@ function DraftedTeams() {
         <div className={'panel-scrollable'}>
             <Tabs id="suggested-player-tabs" activeKey={key} onSelect={(k) => setKey(k || '0')}>
                 {teams.map((team, idx) =>
-                    <Tab eventKey={idx} key={idx} title={title(idx, draftStatus.currentTeam, draftConfig.draftPosition)}>
+                    <Tab eventKey={idx} key={idx} title={title(team, idx, draftStatus.currentTeam, draftConfig.draftPosition)}>
                         <ListGroup>
                             {team.players.length === 0 && <ListGroup.Item>Empty</ListGroup.Item>}
-                            {team.players.length !== 0 &&
+                            {format === "auction" &&
+                            <ListGroup.Item>
+                                <AuctionTeamSummary team={team} auctionSettings={auctionSettings}/>
+                            </ListGroup.Item>}
+                            {format !== "auction" && team.players.length !== 0 &&
                             <ListGroup.Item>
                                 <TeamSummary players={team.players} config={draftConfig}/>
                             </ListGroup.Item>}
                             {team.players.map((p, pIdx) =>
-                                <ListGroup.Item key={p.id}>{"Round: " + (pIdx + 1) + " " + p.position + " " + p.name}</ListGroup.Item>
+                                <ListGroup.Item key={p.id}>
+                                    {(format === "auction" ? "$" + p.purchasePrice + " " : "Round: " + (pIdx + 1) + " ") + p.position + " " + p.name}
+                                </ListGroup.Item>
                             ).reverse()}
                         </ListGroup>
                     </Tab>

@@ -15,11 +15,33 @@ export interface Player {
     relativeValue: number
     age: number
     tier: number
+    auctionValue: number
+    bye: number
+    purchasePrice: number
+    draftedByTeam?: number
 }
 
 export interface Team {
+    name: string
     players: Player[]
+    budget: number
 }
+
+export interface PositionBudgets {
+    qb: number
+    rb: number
+    wr: number
+    te: number
+    k: number
+    def: number
+}
+
+export interface AuctionSettings {
+    totalBudget: number
+    positionBudgets: PositionBudgets
+}
+
+export type DraftFormat = 'snake' | 'auction'
 
 export interface CurrentDraftStatus {
     currentTeam: number

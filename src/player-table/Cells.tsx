@@ -12,11 +12,40 @@ interface FilterRendererProps {
 }
 
 const DraftButtonFormatter = ({row}: FormatterProps<Player>) => {
-    const {draftPlayers} = useDraftContext();
+    const {draftPlayers, nominatePlayer, format} = useDraftContext();
+    if (format === "auction") {
+        return (
+            <Button size="sm" variant="success" onClick={() => nominatePlayer(row)}>
+                Bid
+            </Button>
+        );
+    }
     return (
         <Button size="sm" variant="success" onClick={() => draftPlayers([row])}>
             Draft
         </Button>
+    );
+};
+
+const AuctionValueFormatter = ({row}: FormatterProps<Player>) => {
+    const popover = (
+        <Popover id={`auction-value-popover-${row.id}`}>
+            <Popover.Header as="h3">{row.name}</Popover.Header>
+            <Popover.Body>
+                <div>Value: ${row.auctionValue}</div>
+                <div>Bye: {row.bye}</div>
+            </Popover.Body>
+        </Popover>
+    );
+    return (
+        <span className="adp-cell-content">
+            <span className="adp-value">${row.auctionValue}</span>
+            <OverlayTrigger trigger="click" placement="right" overlay={popover} rootClose>
+                <Button size="sm" variant="outline-secondary" className="notes-icon-button">
+                    📝
+                </Button>
+            </OverlayTrigger>
+        </span>
     );
 };
 
@@ -189,6 +218,28 @@ export const Cells: Map<string, Column<Player>> = new Map<string, Column<Player>
                     </select>
                 </div>
             )
+        }
+    ],
+    ["auction-value",
+        {
+            key: 'auctionValue',
+            name: 'Value',
+            width: 70,
+            frozen: true,
+            sortable: true,
+            cellClass: () => {
+                return "cell-adp"
+            },
+            formatter: AuctionValueFormatter
+        }
+    ],
+    ["bye",
+        {
+            key: 'bye',
+            name: 'Bye',
+            width: 30,
+            frozen: true,
+            sortable: true
         }
     ],
     ["draft-player",

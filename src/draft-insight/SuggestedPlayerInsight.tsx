@@ -9,7 +9,7 @@ interface Props {
 }
 
 const SuggestedPlayersInsight = ({displayCount}: Props) => {
-    const {availablePlayers, targetedPlayers, draftStatus, teams, jumpToPlayer} = useDraftContext();
+    const {availablePlayers, targetedPlayers, draftStatus, teams, jumpToPlayer, format} = useDraftContext();
     const [key, setKey] = useState("best");
 
     const players = [...availablePlayers];
@@ -22,6 +22,10 @@ const SuggestedPlayersInsight = ({displayCount}: Props) => {
 
     function sortByADP(p1: Player, p2: Player) {
         return p1.adp - p2.adp;
+    }
+
+    function sortByValue(p1: Player, p2: Player) {
+        return p2.auctionValue - p1.auctionValue;
     }
 
     function getBestAvailable(team: Team, limit: number): Player[] {
@@ -37,6 +41,12 @@ const SuggestedPlayersInsight = ({displayCount}: Props) => {
     function getADP(limit: number): Player[] {
         return [...players]
             .sort(sortByADP)
+            .slice(0, limit);
+    }
+
+    function getTopValue(limit: number): Player[] {
+        return [...players]
+            .sort(sortByValue)
             .slice(0, limit);
     }
 
@@ -57,26 +67,30 @@ const SuggestedPlayersInsight = ({displayCount}: Props) => {
               activeKey={key}
             // @ts-ignore
               onSelect={(k) => setKey(k)}>
+            {format === "auction" ?
+            <Tab eventKey="adp" title="VALUE">
+                <TopPlayerList players={getTopValue(displayCount)} keyId={"adp"} onJump={jumpToPlayer} format={format}/>
+            </Tab> :
             <Tab eventKey="adp" title="ADP">
-                <TopPlayerList players={getADP(displayCount)} keyId={"adp"} onJump={jumpToPlayer}/>
-            </Tab>
+                <TopPlayerList players={getADP(displayCount)} keyId={"adp"} onJump={jumpToPlayer} format={format}/>
+            </Tab>}
             <Tab eventKey="best" title="BEST">
-                <TopPlayerList players={getBestAvailable(currentTeam, displayCount)} keyId={"best"} onJump={jumpToPlayer}/>
+                <TopPlayerList players={getBestAvailable(currentTeam, displayCount)} keyId={"best"} onJump={jumpToPlayer} format={format}/>
             </Tab>
             <Tab eventKey="qb" title="QB">
-                <TopPlayerList players={getByPosition("QB", displayCount)} keyId={"qb"} onJump={jumpToPlayer}/>
+                <TopPlayerList players={getByPosition("QB", displayCount)} keyId={"qb"} onJump={jumpToPlayer} format={format}/>
             </Tab>
             <Tab eventKey="rb" title="RB">
-                <TopPlayerList players={getByPosition("RB", displayCount)} keyId={"rb"} onJump={jumpToPlayer}/>
+                <TopPlayerList players={getByPosition("RB", displayCount)} keyId={"rb"} onJump={jumpToPlayer} format={format}/>
             </Tab>
             <Tab eventKey="wr" title="WR">
-                <TopPlayerList players={getByPosition("WR", displayCount)} keyId={"wr"} onJump={jumpToPlayer}/>
+                <TopPlayerList players={getByPosition("WR", displayCount)} keyId={"wr"} onJump={jumpToPlayer} format={format}/>
             </Tab>
             <Tab eventKey="te" title="TE">
-                <TopPlayerList players={getByPosition("TE", displayCount)} keyId={"te"} onJump={jumpToPlayer}/>
+                <TopPlayerList players={getByPosition("TE", displayCount)} keyId={"te"} onJump={jumpToPlayer} format={format}/>
             </Tab>
             <Tab eventKey="targets" title="★">
-                <TopPlayerList players={getBestTargets(displayCount)} keyId={"targets"} onJump={jumpToPlayer}/>
+                <TopPlayerList players={getBestTargets(displayCount)} keyId={"targets"} onJump={jumpToPlayer} format={format}/>
             </Tab>
         </Tabs>
     );

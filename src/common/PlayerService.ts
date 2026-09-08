@@ -37,6 +37,39 @@ export function updatePlayersRVandTier(basePlayers: Player[]) {
 
 }
 
+export function updateAuctionPlayersValueAndTier(basePlayers: Player[]) {
+
+    updatePositionRank(basePlayers);
+
+    let playersByPosition: Map<string, Player[]> = new Map<string, Player[]>();
+    basePlayers.forEach(p => {
+        let x = playersByPosition.has(p.position) ? playersByPosition.get(p.position)! : []
+        x.push(p);
+        playersByPosition.set(p.position, x);
+    });
+
+    let qb: Player[] = playersByPosition.get("QB") || [];
+    let rb: Player[] = playersByPosition.get("RB") || [];
+    let wr: Player[] = playersByPosition.get("WR") || [];
+    let te: Player[] = playersByPosition.get("TE") || [];
+    let k: Player[] = playersByPosition.get("K") || [];
+
+    let qbCkValue = draftConfig.roster.starting.qb * draftConfig.teamCount;
+    let rbCkValue = Math.round(draftConfig.roster.starting.rb * draftConfig.teamCount);
+    let wrCkValue = Math.round(draftConfig.roster.starting.wr * draftConfig.teamCount);
+    let teCkValue = draftConfig.roster.starting.te * draftConfig.teamCount;
+    let kCkValue = draftConfig.roster.starting.k * draftConfig.teamCount;
+
+    const auctionValueMetric = (p: Player) => p.auctionValue;
+
+    computeTierAndRv(qb, draftConfig.compute.tiers.qb, qbCkValue, 32, auctionValueMetric);
+    computeTierAndRv(rb, draftConfig.compute.tiers.rb, rbCkValue, 64, auctionValueMetric);
+    computeTierAndRv(wr, draftConfig.compute.tiers.wr, wrCkValue, 64, auctionValueMetric);
+    computeTierAndRv(te, draftConfig.compute.tiers.te, teCkValue, 32, auctionValueMetric);
+    computeTierAndRv(k, draftConfig.compute.tiers.k, kCkValue, 32, auctionValueMetric);
+
+}
+
 export function updatePositionRank(players: Player[]) {
     let playersByPosition: Map<string, Player[]> = new Map<string, Player[]>();
     players.forEach(p => {
@@ -54,31 +87,31 @@ export function updatePositionRank(players: Player[]) {
     });
 }
 
-function computeTierAndRv(players: Player[], tierCount: number, rvIndex: number, sliceSize: number) {
+function computeTierAndRv(players: Player[], tierCount: number, rvIndex: number, sliceSize: number, metric: (p: Player) => number = (p) => p.points) {
     if (players.length === 0) {
         return;
     }
-    let sortedByPoints: Player[] = [...players].sort((a, b) => b.points - a.points);
-    let points: number[] = sortedByPoints.slice(0, sliceSize).map((p: Player) => p.points);
-    let tiers: number[][] = ckmeans(points, Math.min(tierCount, points.length));
-    updateTierAndRv(sortedByPoints, tiers, rvIndex);
+    let sortedByMetric: Player[] = [...players].sort((a, b) => metric(b) - metric(a));
+    let values: number[] = sortedByMetric.slice(0, sliceSize).map(metric);
+    let tiers: number[][] = ckmeans(values, Math.min(tierCount, values.length));
+    updateTierAndRv(sortedByMetric, tiers, rvIndex, metric);
 }
 
-function updateTierAndRv(players: Player[], tiers: number[][], rvIndex: number) {
+function updateTierAndRv(players: Player[], tiers: number[][], rvIndex: number, metric: (p: Player) => number = (p) => p.points) {
     let index = 0;
     let tier = 0;
 
-    let rvValue: number = players[Math.min(rvIndex, players.length - 1)].points;
+    let rvValue: number = metric(players[Math.min(rvIndex, players.length - 1)]);
 
     for (let i = tiers.length - 1; i >= 0; i--) {
         tier++;
         for (let j = tiers[i].length - 1; j >= 0; j--) {
             let p: Player = players[index];
-            if (tiers[i][j] !== players[index].points) {
-                console.warn("Tier mismatch: expected " + tiers[i][j] + ", got " + players[index].points);
+            if (tiers[i][j] !== metric(players[index])) {
+                console.warn("Tier mismatch: expected " + tiers[i][j] + ", got " + metric(players[index]));
             }
             p.tier = tier;
-            p.relativeValue = parseFloat((p.points - rvValue).toFixed(2))
+            p.relativeValue = parseFloat((metric(p) - rvValue).toFixed(2))
             index++;
         }
     }
@@ -86,7 +119,7 @@ function updateTierAndRv(players: Player[], tiers: number[][], rvIndex: number) 
     for (index; index < players.length; index++) {
         let p = players[index];
         p.tier = tier;
-        p.relativeValue = parseFloat((p.points - rvValue).toFixed(2))
+        p.relativeValue = parseFloat((metric(p) - rvValue).toFixed(2))
     }
 }
 

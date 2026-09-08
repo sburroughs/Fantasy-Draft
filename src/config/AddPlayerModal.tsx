@@ -3,8 +3,10 @@ import Modal from "react-bootstrap/Modal"
 import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 import {NflTeam, NflTeams, Player} from "../common/Player";
+import {useDraftContext} from "../draft-manager/DraftContext";
 
 function ConfigurationModal(props: { onAdd: (player: Player) => void, onDraft: (players: Player[]) => void }) {
+    const {format} = useDraftContext();
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -39,7 +41,10 @@ function ConfigurationModal(props: { onAdd: (player: Player) => void, onDraft: (
             team: team,
             position: position,
             relativeValue: 0,
-            tier: 0
+            tier: 0,
+            auctionValue: 0,
+            bye: 0,
+            purchasePrice: 0
         }
 
         const submitter = (event.nativeEvent as { submitter?: HTMLButtonElement }).submitter;
@@ -92,9 +97,10 @@ function ConfigurationModal(props: { onAdd: (player: Player) => void, onDraft: (
                         <Button variant="primary" name="add" type="submit">
                             Add
                         </Button>
+                        {format === "snake" &&
                         <Button variant="primary" name="draft" type="submit">
                             Draft
-                        </Button>
+                        </Button>}
                     </Form>
                 </Modal.Body>
             </Modal>
